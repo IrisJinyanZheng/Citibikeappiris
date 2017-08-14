@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Add Vehicle - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+	</head>
+
+	<body>
+
+		{% extends "base.html" %} {% block content %}
+		<div class="basic-grey">
+			<h1>Add a New Vehicle</h1>
+
+			<form action="{{ url_for('addVehicleSubmit') }}" method="post">
+				<div>
+
+					<p>
+						<label>
+      Vehicle Name<br>
+    <input type="text" name="vName" placeholder="Vehicle's Name" required>
+    </label>
+					</p>
+					<p>
+						<label>
+      Capacity<br>
+    <input type="number" name="capacity" placeholder="capacity" required>
+    </label>
+					</p>
+					<p>
+						<label>
+      Start Location</label><br>
+      <input type="number" name="vSsID" placeholder="Start Station ID" value=356 required><br />
+    <input type="text" name="vSLatitude" placeholder="Start Latitude" value = 40.716226 required><br />
+    <input type="text" name="vSLongitude" placeholder="Start Longitude" value = 	-73.982612 required>
+    
+					</p>
+									<p>
+						<label>
+      End Location</label><br>
+      <input type="number" name="vEsID" placeholder="End Station ID" value=356  required><br />
+    <input type="text" name="vELatitude" placeholder="End Latitude" value="40.716226	" required><br />
+    <input type="text" name="vELongitude" placeholder="End Longitude" value="-73.982612" required>
+ 
+					</p>	
+					<p>
+						<input class=b tn type="submit">
+						<br /><br />
+						<input type="reset">
+					</p>
+					
+			</form>
+			</div>
+			{% endblock %}
+	</body>
+
+</html>

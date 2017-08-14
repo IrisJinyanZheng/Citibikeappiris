@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Manage {{table_name}} - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	</head>
+
+	<body>
+		{% extends "base.html" %} {% block content %}
+
+		<h1>Manage {{table_name}}</h1>
+		<div id="TableCont" class="table table-responsive table-striped"></div>
+		<div class="container">
+		</div>
+
+
+<script>
+function confirmDelete(v) {
+    var r = confirm("Are you sure you want to delete?");
+if (r == true) {
+	window.location.href="/deleteEntryById/{{table_name}}/" + v
+    return true;
+} else {
+	return false
+}
+}
+</script>
+
+<script>
+
+		//https://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery 
+		$.makeTable = function(mydata) { 
+			var table = $("<table border=1>"); 
+			var tblHeader = "<thead><tr>"; 
+			tblHeader += "<th align='center'>Action</th>"; 
+			for(var k in mydata[0]) tblHeader += "<th>" + k + "</th>"; 
+			tblHeader += "</tr></thead><tbody>"; 
+			$(tblHeader).appendTo(table); 
+			$.each(mydata, function(index, value) { 
+				var TableRow = "<tr align='center'>"; 
+				
+				if("{{table_name}}" == "Vehicles" && value["vID"] == -111){
+					//can't update or delete driverless vehicle
+					TableRow += "<td></td>"
+				}else{
+					if ('{{shouldUpdate}}' == 'False'){
+						//for closed tasks, can only reorder tasks, closed tasks is an archive
+						TableRow += "<td align='center' nowrap><a class='btn btn-outline-primary btn-sm' href=/reassignByIdForm/{{table_name}}/{{id_col}}=" + String(value["{{id_col}}"]) + ">Reassign</a></td>"; 					
+					}else if('{{shouldUpdate}}' == 'NoUpdate'){
+						//for forbidden stations, both recurring and temp
+						TableRow += "<td align='center' nowrap><button class='btn btn-outline-primary btn-sm' onclick=confirmDelete('"+ String(value["{{id_col}}"]) +"') >Delete</button></td>";
+					}else{
+						TableRow += "<td align='center' nowrap><a class='btn btn-outline-primary btn-sm' href=/updateByIdForm/{{table_name}}/{{id_col}}=" + String(value["{{id_col}}"]) + ">Update</a> &nbsp;<button class='btn btn-outline-primary btn-sm' onclick=confirmDelete('"+ String(value["{{id_col}}"]) +"') >Delete</button></td>"; 
+					}
+				}
+				$.each(value, function(key, val) {
+						TableRow += "<td align='center' nowrap>" + val + "</td>"; 
+					});
+					TableRow += "</tr>"; 
+					$(table).append(TableRow);
+			}); 
+			$(table).append("</tbody>");
+			return($(table)); 
+		};
+			var url = "http://ec2-54-196-202-203.compute-1.amazonaws.com/manageTabelJson/{{table_name}}.json"; 
+			$.getJSON(url, function(data) { 
+				var table = $.makeTable(data);
+				$(table).appendTo("#TableCont"); 
+			});
+
+			</script>
+	</body>
+	{% endblock %}
+
+</html>

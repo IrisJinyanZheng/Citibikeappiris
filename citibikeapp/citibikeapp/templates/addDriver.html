@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Add Driver - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+	</head>
+
+	<body>
+		<script type="text/javascript">
+					function driverIDValidator() {
+			//			var bikes = JSON.parse("{{ bikes }}"); json.dumps()
+			var dID = $("#dID").val();
+			var obj = $("#drivers").find("option[value='" + dID + "']");
+			if(obj != null && obj.length > 0) {
+				alert(dID + " already exists");
+				document.getElementById("dID").value = ""
+			return false;
+				
+			}
+//			alert("valid");
+				return true
+		};
+		</script>
+		{% extends "base.html" %} {% block content %}
+		<div class="basic-grey">
+			<h1>Add a New Driver</h1>
+
+			<form action="{{ url_for('addDriverSubmit') }}" method="post">
+				<div>
+					<p>
+						<label>
+      Driver ID (It should be unique)<br>
+    <input type="text"id="dID" name="dID" placeholder="Driver's ID" onblur="driverIDValidator();" required>
+    </label>
+					</p>
+					<p>
+						<label>
+      Driver Name<br>
+    <input type="text" name="dName" placeholder="Driver's Name" required>
+    </label>
+					</p>
+{% for t in tasktypes %}
+					<p>
+						
+						<label for=Field{{t[0]|string}}>{{t[1]}}</label>
+						<input type="radio" name=Field{{t[0]|string}} value="0" id="Field"+{{t[0]|string}} checked="checked">Not Eligible 
+						<input type="radio" name=Field{{t[0]|string}} value="1" id="Field"+{{t[0]|string}}>Eligible
+					
+					</p>
+	{% endfor %}
+					<p>
+						<input class=b tn type="submit">
+						<br /><br />
+						<input type="reset">
+					</p>
+					<datalist id="drivers" > hidden="hidden"
+						<select>
+						    {% for d in drivers %}
+        <option value='{{ d[0] }}' >{{ d[0] }} </option>
+        <option value=1 >1 </option>
+    {% endfor %}
+</select>
+  </datalist>
+			</form>
+			</div>
+			{% endblock %}
+	</body>
+
+</html>

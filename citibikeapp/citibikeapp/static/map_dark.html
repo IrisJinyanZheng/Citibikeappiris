@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<title>Map - Citibike</title>
+		<meta charset="utf-8">
+		<script src='https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.js'></script>
+		<link href='https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.css' rel='stylesheet' />
+		<script src="https://www.w3schools.com/lib/w3.js"></script>
+		<script src="./mapjs.js"></script>
+
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#map {
+				position: absolute;
+				top: 0px;
+				bottom: 0;
+				width: 100%;
+				/*left: 30px;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<style>
+			#menu {
+				position: absolute;
+				background: #fff;
+				padding: 10px;
+				font-family: 'Open Sans', sans-serif;
+			}
+			
+			.mapboxgl-popup {
+				/*max-width: 400px;*/
+				/*font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;*/
+			}
+		</style>
+		<div id='map'></div>
+
+		<!--style='width: 1200px; height: 800px;'-->
+
+		<script>
+			mapboxgl.accessToken = 'pk.eyJ1IjoieXVzaGFuZ2RpIiwiYSI6ImNqM3g2cjI5ZjAwMG0zMm4yYWs5YTF6NGoifQ.M4uVWS7QFUIqdBLyK_AGTw';
+			var map = new mapboxgl.Map({
+				container: 'map',
+				//style: 'mapbox://styles/mapbox/light-v9',
+				style: 'mapbox://styles/yushangdi/cj44n9d9l82q92rnxwo8it62s',
+				center: [-73.944064, 40.731402], // starting position
+				zoom: 11.07 // starting zoom
+			});
+
+			map.addControl(new mapboxgl.NavigationControl());
+
+			var url = 'http://ec2-54-196-202-203.compute-1.amazonaws.com/stationgeojson'
+			var url2 = 'http://ec2-54-196-202-203.compute-1.amazonaws.com/vehiclegeojson'
+			var url3 = 'http://ec2-54-196-202-203.compute-1.amazonaws.com/taskgeojson'
+
+			map.on('load', function() {
+				truckLayers(map, mapboxgl, url2, "bus-15", "circle-15");
+				nystationsLayer(map, mapboxgl, url, "blue-bicycle-15", "bicycle-15", "blue-circle-15");
+				taskLayer(map,mapboxgl,url3)
+			});
+		</script>
+
+	</body>
+
+</html>

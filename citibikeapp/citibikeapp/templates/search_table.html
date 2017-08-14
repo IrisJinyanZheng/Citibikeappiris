@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Search Result - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	</head>
+	{% extends "base.html" %} {% block content %}
+
+	<body>
+		<script type="text/javascript">
+			function showAll() {
+				// replace the contents of the div with the link text
+				$('#close').html($('#close_table').val());
+ 				return false
+			}
+			function showReject() {
+				// replace the contents of the div with the link text
+				$('#close').html($('#close_table_reject').val());
+ 				return false
+			}
+			function showComp() {
+				// replace the contents of the div with the link text
+				$('#close').html($('#close_table_comp').val());
+ 				return false
+			}
+			function showParComp() {
+				// replace the contents of the div with the link text
+				$('#close').html($('#close_table_parcomp').val());
+ 				return false
+			}
+		</script>
+		<div>
+			<h1>In Open Tasks</h1> {{open_table | safe}}
+		</div>
+		<div >
+			<h1>In Closed Tasks</h1> 
+			<button onclick="showAll()">All</button>
+			<button onclick="showReject()">Rejected</button>
+			<button onclick="showComp()">Completed</button>
+			<button onclick="showParComp()">Partical Completed</button>
+			<div id="close">
+				{{close_table | safe}}
+			</div>
+		</div>
+		<div>
+			<h1>In Algo Tasks</h1> {{temp_table | safe}}
+		</div>
+	</body>
+	
+	<textarea style="display:none;" id="close_table">
+		{{close_table | safe}}
+	</textarea>
+	<textarea style="display:none;" id="close_table_reject">
+		{{close_table_reject | safe}}
+	</textarea>
+	<textarea style="display:none;" id="close_table_comp">
+		{{close_table_comp | safe}}
+	</textarea>
+	<textarea style="display:none;" id="close_table_parcomp">
+		{{close_table_parcomp | safe}}
+	</textarea>
+{% endblock %}
+</html>

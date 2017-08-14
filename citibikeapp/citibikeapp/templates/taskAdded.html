@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+	
+{% extends "base.html" %}
+{% block content %}
+<div class="basic-grey">
+    <h1>Task # {{ tID }} is given to Vehicle {{ vID }}</h1>
+    <a class="hyperlink" href="/inputTask">
+    Assign Another Task</a>
+    <p><br /> </p>
+    <a class="hyperlink" href="/manageTask">
+    See All Open Tasks</a>
+</div>   
+{% endblock %}

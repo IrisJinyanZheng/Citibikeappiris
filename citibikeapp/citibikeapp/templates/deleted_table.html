@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!--<script type="text/javascript" src="/home/ubuntu/node_modules/tablesorter/dist/js/jquery.tablesorter.js"></script>-->
+	</head>
+	{% extends "base.html" %} {% block content %}
+	<div>
+		<h1>{{name}}</h1> <button class="btn btn-outline-primary btn-sm" onclick="confirmDelete()" >Clear Deleted Tasks</button>
+			<p></p>
+		{{table | safe}}
+	</div>
+
+	<!-- jQuery -->
+	<script src="/static/js/jquery.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="/static/js/bootstrap.min.js"></script>
+
+<script>
+function confirmDelete() {
+    var r = confirm("Are you sure you want to delete?");
+if (r == true) {
+	window.location.href="/clearDeletedTasks"
+    return true;
+} else {
+	return false
+}
+}
+</script>
+
+	
+	{% endblock %}

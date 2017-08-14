@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Manage Open Tasks - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		
+  		  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		
+		<style>
+			/* https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_affix&stacked=h */
+
+			
+			body { padding-top: 70px; }
+		</style>
+	</head>
+
+	<body>
+		<h1>123</h1>
+		<nav class="navbar navbar-default navbar-fixed-top" data-offset-top="197">
+		<div class="container">
+		<label for="duration">How long should the deleted task's station be forbidden? (in minutes)<input id="duration" name="duration" type="number" value="30" min="0" step = "10"/> </label>
+		<br />Set the duration to 0 if you don't want this task to be forbidden. 
+		<br />Please don't go over days! ex. forbidding a task for 30 min later than 23:30
+		<br />If a task is already accepted, any change except bike number are not allowed. 
+		</div>
+		</nav>
+		
+	These classes are mixin-ed versions of .pull-left and .pull-right, but they're scoped to media queries for easier handling of navbar components across device sizes.
+
+Right aligning multiple components
+Navbars currently have a limitation with multiple .navbar-right classes. To properly space content, we use negative margin on the last .navbar-right element. When there are multiple elements using that class, these margins don't work as intended.
+
+We'll revisit this when we can rewrite that component in v4.
+Fixed to top
+Add .navbar-fixed-top and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }
+Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }Brand
+Home
+Link
+=
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the top of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-top: 70px; }
+Make sure to include this after the core Bootstrap CSS.
+Fixed to bottom
+Add .navbar-fixed-bottom and include a .container or .container-fluid to center and pad navbar content.
+
+Brand
+Home
+Link
+Link
+
+Body padding required
+The fixed navbar will overlay your other content, unless you add padding to the bottom of the <body>. Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body { padding-bottom: 70px; }
+  </body>
+</html>

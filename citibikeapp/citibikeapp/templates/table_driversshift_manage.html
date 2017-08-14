@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Manage Drivers Shift - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	</head>
+
+	<body>
+		{% extends "base.html" %} {% block content %}
+
+		<h1>Manage Drivers Shift</h1>
+		<div id="TableCont" class="table table-responsive table-striped"></div>
+		<div class="container">
+		</div>
+		
+<!--can't delete driver here, can only delete at drivers table'-->
+<script>
+	function confirmEnd(dID) {
+		var r = confirm("CONFIRM ending this shift?"); 
+		if(r == true) {
+			window.location.href = "/verifyDriversShift/dec=1&dID=" + dID;
+			return true;
+		} else {
+			return false
+		}
+	}
+	
+	
+	function disproveEnd(dID) {
+		var r = confirm("DISPROVE ending this shift?"); 
+		if(r == true) {
+			window.location.href = "/verifyDriversShift/dec=0&dID=" + dID;
+			return true;
+		} else {
+			return false
+		}
+	}
+	
+</script>
+<script>
+
+		//https://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery 
+		$.makeTable = function(mydata) { 
+			var table = $("<table border=1>"); 
+			var tblHeader = "<thead><tr>"; 
+			tblHeader += "<th align='center'>Action</th>"; 
+			for(var k in mydata[0]) tblHeader += "<th>" + k + "</th>"; 
+			tblHeader += "</tr></thead><tbody>"; 
+			$(tblHeader).appendTo(table); 
+			$.each(mydata, function(index, value) { 
+				var TableRow = "<tr align='center'>"; 
+				
+				//color requests
+				if (value["signOutReqTime"] != null && value["signOutReqTime"] != "null" && value["signOutReqTime"] != ""){
+					TableRow = "<tr align='center' style='background-color:#0ef435'>"; 
+				}
+				
+				if(value["dID"] == -111){
+					//can't update or delete driverless driver
+					TableRow += "<td></td>"
+				}else{
+
+					TableRow += "<td align='center' nowrap>"; 	
+					//update button
+					TableRow += "<a class='btn btn-outline-primary btn-sm' href=/updateByIdForm/DriversShift/dID=" + String(value["dID"]) + ">Update</a>"
+					//can approve or disapprove shift ending request
+					if (value["signOutReqTime"] != null && value["signOutReqTime"] != "null" && value["signOutReqTime"] != ""){
+						TableRow += "&nbsp;<button class='btn btn-outline-primary btn-sm' onclick=confirmEnd('"+ String(value["dID"]) +"') >&#10003;</button>";
+						TableRow += "&nbsp;<button class='btn btn-outline-primary btn-sm' onclick=disproveEnd('"+ String(value["dID"]) +"') >&#10005;</button>";
+					}	
+					TableRow += "</td>";
+				
+				}
+				$.each(value, function(key, val) {
+						TableRow += "<td align='center' nowrap>" + val + "</td>"; 
+					});
+					TableRow += "</tr>"; 
+					$(table).append(TableRow);
+			}); 
+			$(table).append("</tbody>");
+			return($(table)); 
+		};
+			var url = "http://ec2-54-196-202-203.compute-1.amazonaws.com/manageTabelJson/DriversShift.json"; 
+			$.getJSON(url, function(data) { 
+				var table = $.makeTable(data);
+				$(table).appendTo("#TableCont"); 
+			});
+
+			</script>
+	</body>
+	{% endblock %}
+
+</html>

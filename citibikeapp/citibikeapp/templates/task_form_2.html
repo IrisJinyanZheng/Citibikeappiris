@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+		<link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
+
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+		
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css" integrity="sha256-zDI1g6Yzr25YWykCOmTUeageF3RWaLnx+Ik8NqVk1xA=" crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css" integrity="sha256-zV9aQFg2u+n7xs0FTQEhY0zGHSFlwgIu7pivQiwJ38E=" crossorigin="anonymous" />
+		<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css.map"/>-->
+
+	</head>
+
+	{% extends "base.html" %} {% block content %}
+
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+		<!--<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>-->
+		
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js" integrity="sha256-FaYRflg3IJpVUN+JgijEHFUYgsn1wS1xRlcKTIgToIo=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js" integrity="sha256-xoE/2szqaiaaZh7goVyF5p9C/qBu9dM3V5utrQaiJMc=" crossorigin="anonymous"></script>
+		
+	<script type="text/javascript">
+
+		function parseTime(d,t) {
+			var year = d.substring(0,4)
+			var month = d.substring(5,7)
+			var day = d.substring(8)
+				var hour = t.substring(0, 2)
+				var min = t.substring(3)
+				return year + "-" + month+ "-" + day + " " + hour + ":" + min + ":00"
+			};
+			
+		function parseStartTime() {
+				var comT = document.getElementById("comT").value;
+				var comD = document.getElementById("comD").value;
+				document.getElementById("completionTime").value = parseTime(comD,comT)
+			};
+			
+		function defaultTime() {
+				document.getElementById("completionTime").value = "0000-00-00 00:00:00"
+			};
+			
+		function driverAbilityValidator() {
+			var vID = $("#vID").val();
+			var tType = $("#tType").val();
+			var dID1 = -111
+			var dID2 = -111
+			var isEli1 = 0
+			var isEli2 = 0
+			var urlV = 'http://ec2-54-196-202-203.compute-1.amazonaws.com/searchByCol/Vehicles/vID=' + String(vID) + '.json'
+			var isMove = $('input[name=isMove]:checked', '#assignTask').val()
+
+		$.getDrivers = function(mydata) {
+				$.each(mydata, function(index, value) {
+					dID1 = value["dID1"]
+					dID2 = value["dID2"]
+				});
+			};
+
+			$.valiDrivers1 = function(data, typeID) {
+				$.each(data, function(index, value) {
+					isEli1 = value["Field" + String(typeID)]
+				});
+			};
+			$.valiDrivers2 = function(data, typeID) {
+				$.each(data, function(index, value) {
+					isEli2 = value["Field" + String(typeID)]
+				});
+			};
+
+			$.validateDriverFinal = function(typeID) {
+
+				$.getJSON(urlV, function(data) {
+					$.getDrivers(data);
+					var urlD1 = '/searchByCol/Drivers/dID=' + String(dID1) + '.json'
+					var urlD2 = '/searchByCol/Drivers/dID=' + String(dID2) + '.json'
+					$.getJSON(urlD1, function(data) {
+						$.valiDrivers1(data,typeID);
+						$.getJSON(urlD2, function(data) {
+							$.valiDrivers2(data,typeID);
+
+							if(isEli1 == 1 || isEli2 == 1) {
+								alert("At Least One Driver Is Qualified for Task Type " + String(typeID))
+								return true
+							}
+							alert("Both Drivers Are Not Qualified for Task Type " + String(typeID))
+							return false
+						});
+
+					});
+
+				});
+			};
+
+			if (isMove == 1){
+				tType = 1;
+				$.validateDriverFinal(1);
+				tType = 3;
+				$.validateDriverFinal(3);
+				
+			}else{
+				$.validateDriverFinal(tType);
+			}
+		}
+
+		function bikeValidator() {
+			//			var bikes = JSON.parse("{{ bikes }}"); json.dumps()
+			var bID = $("#bID").val();
+			var obj = $("#Bikes").find("option[value='" + bID + "']");
+			if(obj != null && obj.length > 0) {
+				alert("valid");
+				return true
+			}
+			alert(bID + " is not a valid station ID");
+			return false;
+		};
+
+		function noMove() {
+			document.getElementById("toS").style.visibility = "hidden";
+			document.getElementById("toS").required = false;
+			document.getElementById("toSL").style.visibility = "hidden";
+			document.getElementById("tType").style.visibility = "visible"
+			document.getElementById("tType").required = true;
+		}
+
+		function move() {
+			document.getElementById("tType").value = "-1";
+			document.getElementById("tType").style.visibility = "hidden";
+			document.getElementById("tType").required = false;
+			document.getElementById("toS").style.visibility = "visible";
+			document.getElementById("toS").required = true;
+			document.getElementById("toSL").style.visibility = "visible";
+		}
+
+		function noVehicle() {
+			document.getElementById("vID").style.visibility = "hidden";
+			document.getElementById("vID").value = "-111";
+		}
+
+		function Vehicle() {
+			document.getElementById("vID").style.visibility = "visible";
+			document.getElementById("vID").value = null;
+		}
+
+		// http://stackoverflow.com/a/24936814/4779449
+		function vehicleValidator(vID) {
+			var obj = $("#vIDs").find("option[value='" + vID + "']");
+			if((obj != null && obj.length > 0) || vID == -111) {
+				//alert("valid"); // allow form submission
+				return true
+			}
+			//alert("invalid"); // don't allow form submission
+			alert(vID + " is not a valid vehicle ID");
+			return false;
+		};
+
+		function stationValidator(sID) {
+			var obj = $("#Stations").find("option[value='" + sID + "']");
+			if(obj != null && obj.length > 0) {
+				//alert("valid"); // allow form submission
+				return true
+			}
+			//alert("invalid"); // don't allow form submission
+			alert(sID + " is not a valid station ID");
+			return false;
+		};
+
+		$(document).ready(function() {
+			$('#assignTask').submit(function() {
+				var vID = $("#vID").val();
+				var fromS = $("#fromS").val()
+				var toS = $("#toS").val()
+				var existingModelName = $('h2').text();
+				//alert("Submitted: " + modelname);
+				if(vehicleValidator(vID) && stationValidator(fromS) && (document.getElementById("toS").required == false || stationValidator(toS))) {
+					//alert(modelname + " is valid");
+					return true;
+				}
+				//alert(vID + " is not a valid vehicle ID");
+				return false;
+			});
+		});
+	</script>
+
+	<div class="basic-grey">
+		<h1>Assign Task</h1>
+
+		<form action="{{ url_for('assignTask') }}" method="post" id="assignTask">
+			<div>
+				<p>
+					<input type="radio" name="isV" value="0" id="rad_vid" onClick="noVehicle()">No
+					<input type="radio" name="isV" value="1" id="rad_vid" checked="checked" onClick="Vehicle()">Yes
+					<label for="rad_vid">Assign to a specific vehicle?</label>
+				</p>
+
+				<p>
+					<label for="vID">Vehicle <br /></label>
+					<input list="vIDs" name="vID" id="vID" name="vID" placeholder="Vehicle id" required="required">
+					<datalist id="vIDs">
+						<select>
+							<option value="" disabled="disabled"  selected="selected">See the list of Vehicles</option>
+						    {% for v in vehicles %}
+        <option value='{{ v[0] }}' >{{ v[0]|string + ' ' + v[1]|string + ' '+ v[2]|string + ' ' +v[3]|string}} </option>
+    {% endfor %}
+    
+</select>
+  </datalist>
+				</p>
+
+				<p>
+					<input type="radio" name="isMove" id="isMove" value="0" checked="checked" onClick="noMove()">No
+					<input type="radio" name="isMove" id="isMove" value="1" onClick="move()">Yes
+					<label for="isMove">Move Bike From A to B?</label>
+				</p>
+				<p>
+					<label>
+      Task Type<br>
+      <select name="tType" id="tType" required="required">
+		  <option value="" disabled selected>Choose Task...</option>
+    {% for t in tasks %}
+  		{% if  t[0] != 16 and t[0] != 17 and t[0] != 18 %}
+        		<option value='{{ t[0] }}' >{{ t[0]|string + ' ' + t[1] }} </option>
+		{% endif %}
+    {% endfor %}
+		</select>
+    </label>
+				</p>
+				<p>
+					<input type="button" class=b tn id='driverValidatorButton' onclick="driverAbilityValidator()" value="Validate Driver"></input>
+
+				</p>
+
+				<p>
+					<label for="fromS">Station ID<br /></label>
+					<input list="Stations" name="fromS" id="fromS" placeholder="Station id" required="required">
+					<datalist id="Stations">
+						<select>
+							<option value="" disabled="disabled" selected="selected">sID, stationName, availableDocks, availableBikes, totalDocks</option>
+						    {% for s in stations %}
+        <option value='{{ s[0] }}' >{{ s[0]|string + ' ' + s[1]|string + ' D '+ s[2]|string + ' B ' +s[3]|string + ' T ' +s[4]|string}} </option>
+    {% endfor %}
+</select>
+  </datalist>
+				</p>
+
+				<p>
+					<label for="toS" id='toSL' style="visibility:hidden"> Drop off at Station<br /></label>
+					<input list="Stations" id='toS' name="toS" placeholder="Station id" style="visibility:hidden">
+
+				</p>
+				<p>
+					<label>
+      # of Bikes<br>
+    <input type="number" name="bikeNum" placeholder="0" required>
+    </label>
+				</p>
+				<p>
+					<label>
+      Deadline(yyyy-mm-dd hh:mm:ss)<br>
+    <input id="completionTime" name="completionTime" placeholder="yyyy-mm-dd hh:mm:ss" value="0000-00-00 00:00:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}" readonly="readonly">
+    Please make sure the time in this box is correct before submit. <br />
+	<input type="date" id="comD" name="comD" value="0000-00-00" onblur="parseStartTime()" >
+	<input type="time" class="timepicker" id="comT" name="comT" value="00:00" onblur="parseStartTime()">
+					
+					</label>time in 24 hour format; default: 0000-00-00 00:00:00
+					<input type="button" value="reset to no deadline" onclick="defaultTime()">
+				</p>
+				
+				<p>
+					<label>
+      Priority<br>
+      <select name="priority" id="priority" required="required">
+		  <option value="1" selected>Low</option>
+         <option value="5" >Middle</option>
+          <option value="7" >High</option>
+		</select>
+    </label>
+				</p>
+				<p>
+					<label>
+      Comment (Ex. which bike is broken?)<br>
+    <input type="text" name="comment" placeholder="Comment" value="test task" type="text">
+    </label>
+				</p>
+				<!--<p>
+					<label>
+      Estimate Completion T<br>
+    <input type="text" name="estimateDuration" placeholder="Estimated time needed for the task" value=0 type="text" readonly="readonly">
+    </label>
+				</p>-->
+				<label>
+      Bike ID Validator(ex. 0x0000000000000000)</label>Please copy the bike ID to comment.<br>
+				<input type="text" id="bID" name="bID" placeholder="bikeID" value='0x0000000000000000' type="text">
+
+				<datalist id="Bikes" hidden="hidden">
+						<select>
+						    {% for b in bikes %}
+        <option value='{{ b }}' >{{ b }} </option>
+    {% endfor %}
+</select>
+  </datalist>
+				<input type="button" class=b tn id='bikeValidatorButton' onclick="bikeValidator()" value="Validate"></input>
+				</p>
+				<p>
+					<input class=b tn type="submit">
+				</p>
+				<br />
+				<p>
+					<input type="reset">
+				</p>
+				<!--<p>
+    <input type="button" value="Button (input tag)">
+  </p>
+  <p>
+      <button>Button (button tag)</button>
+  </p>
+  </div>
+  <fieldset>
+    <legend>Legend</legend>
+    Fieldset
+  </fieldset>-->
+		</form>
+		</div>
+			<script type="text/javascript">
+				//http://jonthornton.github.io/jquery-timepicker/
+				if ( $('#comD')[0].type != 'date' ){
+//					document.getElementById("comD").value = null;
+					$('#comD').datepicker({dateFormat: "yy-mm-dd"});
+				} 
+				
+				if ( $('#comT')[0].type != 'time' ) {
+//					document.getElementById("comT").value = null;
+					$('#comT').timepicker({'timeFormat': "H:i"});
+				}
+				
+			</script>
+		{% endblock %}
+
+</html>

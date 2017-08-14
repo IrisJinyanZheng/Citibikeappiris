@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		<!-- Custom CSS -->
+		<link href="../static/css/simple-sidebar.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	</head>
+
+	{% extends "base.html" %} {% block content %}
+
+	<script type="text/javascript">
+		function noVehicle() {
+			document.getElementById("vID").style.visibility = "hidden";
+			document.getElementById("vID").value = "-111";
+		}
+
+		function Vehicle() {
+			document.getElementById("vID").style.visibility = "visible";
+			document.getElementById("vID").value = null;
+		}
+
+		function TimeNow() {
+			var today = new Date();
+			var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+			var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+			var CurrentDateTime = date + ' ' + time;
+			return CurrentDateTime;
+		}
+	</script>
+
+	<div class="basic-grey">
+		<h1>Search Task</h1>
+
+		<form action="{{ url_for('searchTaskResult') }}" method="post" id="assignTask">
+			<div>
+				<p>
+					<input type="radio" name="isV" value="0" id="rad_vid" onClick="noVehicle()">No
+					<input type="radio" name="isV" value="1" id="rad_vid" checked="checked" onClick="Vehicle()">Yes
+					<label for="rad_vid">Assigned to a specific vehicle?</label>
+				</p>
+	<p>
+	<em><b>Leave the input field blank if there's no restriction</b></em>	
+	</p>
+				<p>
+					<label for="vID">Vehicle ID <br /></label>
+					<input name="vID" id="vID" name="vID" placeholder="All" value="">
+				</p>
+				<p>
+					<label>
+     Publish Time From...<br>
+    <input name="fromPublishTime" placeholder="yyyy-mm-dd hh:mm:ss" value="0000-00-00 00:00:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}">
+    </label>default: 0000-00-00 00:00:00
+				</p>
+
+				<p>
+					<label>
+     Publish Time To...<br>
+    <input name="toPublishTime" id="toPublishTime" placeholder="yyyy-mm-dd hh:mm:ss" value=""; pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}">
+    </label>default: Time Now
+				</p>
+				<script type="text/javascript">
+					var today = new Date();
+					var date = today.getFullYear() + '-' + ("0" + (today.getMonth() + 1)).slice(-2) + '-' + ("0" + today.getDate()).slice(-2);
+					var time = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2);
+					var CurrentDateTime = date + ' ' + time;
+					document.getElementById("toPublishTime").value = CurrentDateTime
+				</script>
+				<p>
+					<label>
+      Task Type ID<br>
+      <input type="number" name="tType" id="tType" placeholder="All" value="">
+    </label>
+				</p>
+
+				<p>
+					<label for="fromS">Station ID<br /></label>
+					<input name="fromS" id="fromS" placeholder="All" value="">
+				</p>
+
+				<p>
+					<label>
+      # of Bikes<br>
+    <input type="number" name="bikeNum" placeholder="All"  value="">
+    </label>
+				</p>
+				<!--<p>
+					<label>
+      Deadline(yyyy-mm-dd hh:mm:ss)<br>
+    <input name="completionTime" placeholder="yyyy-mm-dd hh:mm:ss" value="0000-00-00 00:00:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}">
+    </label>default: 0000-00-00 00:00:00
+				</p>-->
+				<p>
+					<label>
+      Priority<br>
+	<input type="number" name="priority" id="priority" placeholder="All" value = "" >
+    </label>
+				</p>
+				<!--<p>
+					<label>
+      Comment includes...(separated by commas)<br>
+    <input type="text" name="comment" placeholder="Comment" value="test task" type="text">
+    </label>
+				</p>-->
+
+				<p>
+					<input class=b tn type="submit" value="Search">
+				</p>
+				<br />
+				<p>
+					<input type="reset">
+				</p>
+
+		</form>
+		</div>
+
+		{% endblock %}
+
+</html>

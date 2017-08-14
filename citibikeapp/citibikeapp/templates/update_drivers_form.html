@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Update - Citibike</title>
+		<link rel="stylesheet" type="text/css" href="../../static/style.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		<!-- Custom CSS -->
+		<link href="../../static/css/simple-sidebar.css" rel="stylesheet">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	</head>
+
+	<body>
+		{% extends "base.html" %} {% block content %}
+
+		<h1>Update Drivers # {{id}}</h1>
+		<div class="container">
+			Field number corresponds to task type ID
+		<form action="{{ url_for('updateById',table = 'Drivers' ,col = 'dID', id = id) }}" method="POST" id="updateTable">
+
+		</form>
+</div>
+		<script>
+			$.makeTable = function(mydata) {
+				var form = $("<div></div>");
+
+				$.each(mydata[0], function(key, val) {
+					var labelS = "<label for=" + key + ">" + key + "</label>&nbsp;&nbsp;";
+					if (key == 'dID'){
+						var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' readonly='readonly'></br>"
+
+						
+					}else if(key == 'dName'){
+						 var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' required></br>"
+
+					}else{
+						if (val == 1){
+							var inputS = "&nbsp;&nbsp;<input type='radio' value='0' id='" + key + "' name='" + key + "'>Not Eligible"
+ 							inputS =  inputS + "&nbsp;&nbsp;<input type='radio' value='1' id='" + key + "' name='" + key + "' checked>Eligible </br>"
+					
+						}else if(val == 0){
+							var inputS = "&nbsp;&nbsp;<input type='radio' value='0' id='" + key + "' name='" + key + "'checked>Not Eligible"
+ 							inputS =  inputS + "&nbsp;&nbsp;<input type='radio' value='1' id='" + key + "' name='" + key + "' >Eligible </br>"
+							
+						}else{
+							var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "'></br>"
+
+						}
+				
+					}
+					$(form).append(labelS);
+					$(form).append(inputS);
+				});
+					var sumbitButton = "	<input class=b tn type=submit>"
+					$(form).append(sumbitButton);
+
+				return($(form));
+			};
+			var url = "http://ec2-54-196-202-203.compute-1.amazonaws.com/searchByCol/Drivers/dID={{id}}.json";
+			$.getJSON(url, function(data) {
+				var form = $.makeTable(data);
+				$(form).appendTo("#updateTable");
+
+			});
+		</script>
+		{% endblock %}
+	</body>
+
+</html>

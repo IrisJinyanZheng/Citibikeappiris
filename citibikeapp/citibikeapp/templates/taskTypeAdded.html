@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+	
+{% extends "base.html" %}
+{% block content %}
+<div class="basic-grey">
+    <h1>Task # {{ tType }} {{tName}} is Added</h1>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/inputTaskType">
+    Add Another Task Type</a>
+    <p><br/></p>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/Tasks">
+    See All Task Types</a>
+</div>   
+{% endblock %}

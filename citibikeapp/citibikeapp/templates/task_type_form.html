@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+	</head>
+
+	{% extends "base.html" %} {% block content %}
+
+	<div class="basic-grey">
+		<h1>Add a New Type of Task</h1>
+
+		<form action="{{ url_for('addTaskType') }}" method="post">
+			<div>
+				<p>
+					<label>
+      Task Name<br>
+    <input type="text" name="tName" placeholder="Task Name" required>
+    </label>
+				</p>
+				<p>
+					<label>
+      Does the number of bikes on the VEHICLE increase or decrease after completing this task?<br>
+         <select name="deltaBike" id="deltaBike" required="required">
+		  <option value="" disabled selected>Choose One...</option>
+
+        <option value='1' >Increase </option>
+        <option value='0' >No change/ NA </option>
+        <option value='-1' >Decrease </option>
+
+		</select>
+    </label>
+				</p>
+				<p>
+					<input class=b tn type="submit">
+					<br /><br />
+					<input type="reset">
+				</p>
+				<datalist id="drivers" hidden="hidden">
+						<select>
+						    {% for d in drivers %}
+        <option value='{{ d }}' >{{ d }} </option>
+    {% endfor %}
+</select>
+  </datalist>
+		</form>
+		</div>
+		{% endblock %}
+
+</html>

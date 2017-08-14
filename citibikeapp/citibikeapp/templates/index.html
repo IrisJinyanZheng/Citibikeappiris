@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+	
+
+{% extends "base.html" %}
+{% block content %}
+<div class="basic-grey">
+    <h1>Welcome!</h1>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/inputTask ">
+    Assign Task</a>
+    <br><br>
+    	<a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/inputTaskType ">
+    Add Task Type</a>
+    <br><br>
+</div>    	
+<div class="basic-grey">
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/OpenTasks ">
+    See All Open Tasks</a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/ClosedTasks ">
+    See All Closed Tasks</a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/Stations ">
+    See All Stations</a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/Tasks ">
+    See All Task Types</a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/Drivers ">
+    See All Drivers</a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/Vehicles ">
+    See All Vehicles</a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/TempTasks ">
+    See All Algo Tasks </a>
+    <br><br>
+    <a class="hyperlink" href="http://ec2-54-196-202-203.compute-1.amazonaws.com/table/HistCheck ">
+    See All Login History</a>
+</div>   
+{% endblock %}
