@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-09 14:17:42
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-13 20:48:55
+# @Last Modified time: 2017-08-15 16:25:20
 
 from collections import Counter
 import csv
@@ -285,7 +285,8 @@ def assign_algo_break(cur, task, vID, dID1, dID2, orderNum, fixTask):
     tType = parseForType(task)
 
     nowTime = getNYtimenow()
-    completionTime = str(task.end_time)[:19]
+    # completionTime = str(task.end_time)[:19]
+    completionTime = None
     priority = 1
     sID = 0
     bikeNum = 0
