@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-08 23:01:48
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-10 15:23:18
+# @Last Modified time: 2017-08-15 15:05:14
 
 from collections import Counter
 import csv
@@ -152,6 +152,8 @@ def verifyDriversShift(decision,dID):
     	# archive this shift
     	cur.execute("""UPDATE ShiftHist SET endTime = ?, lunchCount = ?, breakCount = ?  WHERE dID=? and vID = ? and startTime = ?""",[nowTime, lunchCount, breakCount, dID, vID, startTime])
     	
+        # Update vACsID to start location when log off
+        cur.execute("""UPDATE Vehicles SET vACsID = vSsID WHERE vID=?""",[vID])
     	result = "Approved sign out"
 
     if str(decision) == "0":
