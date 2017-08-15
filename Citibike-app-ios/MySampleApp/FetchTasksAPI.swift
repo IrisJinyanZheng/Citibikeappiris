@@ -214,12 +214,12 @@ class FetchTasksAPI{
                             let tType = value["tType"] as? Int,
                             let sID = value["sID"] as? Int,
                             let bikeNum = value["bikeNum"] as? Int,
-                            let comment = value["comment"] as? String,
                             let orderNum = value["orderNum"] as? Int{
                     
                     let completionTimeS = ""
                     let acceptTimeS = ""
                     let rejTimeS = ""
+                    let comment = ""
                     let task = Task(tID: tID, publishTimeS: publishTimeS, acceptTimeS: acceptTimeS, vID: vID, arrivalTimeS: "", completionTimeS: completionTimeS, priority: String(1), tType: tType, sID: sID, bikeNum: bikeNum, comment: comment, orderNum: orderNum, rejTimeS: rejTimeS)
 
                     
@@ -242,6 +242,10 @@ class FetchTasksAPI{
                     if let rejTimeS = value["rejTime"] as? String
                     {
                         task.rejTimeS = rejTimeS
+                    }
+                    if let commentS = value["comment"] as? String
+                    {
+                        task.comment = commentS
                     }
                     
                     tasks.append(task)
