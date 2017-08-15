@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 11:49:45
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-09 14:12:56
+# @Last Modified time: 2017-08-15 14:59:51
 
 
 from collections import Counter
@@ -40,7 +40,7 @@ def manageTabelJson(table):
             Left JOIN Tasks on Tasks.tType = ot.tType
             Left JOIN Stations  on Stations.sID = ot.sID
             Left JOIN PriorityCode  on PriorityCode.priority = ot.priority
-            left JOIN ReasonCode ON ot.reasonID = ReasonCode.reasonName
+            left JOIN ReasonCode ON ot.reasonID = ReasonCode.reasonID
             Order By ot.vID, ot.orderNum"""
     elif table == "Vehicles":
         sql = """SELECT * FROM Vehicles"""
