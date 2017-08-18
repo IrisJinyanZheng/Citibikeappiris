@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 23:28:02
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-13 21:06:21
+# @Last Modified time: 2017-08-18 13:25:30
 
 from collections import Counter
 import csv
@@ -32,7 +32,9 @@ from citibikeapp import app
 @login_required
 def breaksJson():
     con = connect_to_database()
-    sql = """SELECT Breaks.vID, Breaks.tType, Tasks.tName, Breaks.publishTime FROM Breaks Left JOIN Tasks on Tasks.tType = Breaks.tType"""
+    sql = """SELECT Breaks.vID, Breaks.tType, Tasks.tName, Breaks.publishTime FROM Breaks 
+        Left JOIN Tasks on Tasks.tType = Breaks.tType""" 
+        # left JOIN Vehicles on Vehicles.vID = Breaks.vID ,Vehicles.startTime, Vehicles.endTime
     df = pd.read_sql(sql, con)
     con.close()
 
@@ -43,7 +45,8 @@ def breaksJson():
 @login_required
 def manageBreak():
     con = connect_to_database()
-    sql = """SELECT Vehicles.vID, Vehicles.vName, Vehicles.dID1,  d1.dName as dName1, Vehicles.dID2,  d2.dName as dName2, Vehicles.capacity, Vehicles.vBike, Vehicles.tID, 
+    sql = """SELECT Vehicles.vID, Vehicles.vName, Vehicles.dID1,  d1.dName as dName1, Vehicles.dID2,  d2.dName as dName2, Vehicles.capacity, 
+            Vehicles.vBike, Vehicles.tID, Vehicles.startTime, Vehicles.endTime,
             ds1.signInTime as signInTime1, ds1.signOutReqTime as signOutReqTime1, ds1.lunchCount as lunchCount1, ds1.breakCount as breakCount1,
             ds2.signInTime as signInTime2, ds2.signOutReqTime as signOutReqTime2, ds2.lunchCount as lunchCount2, ds2.breakCount as breakCount2
             FROM Vehicles             
