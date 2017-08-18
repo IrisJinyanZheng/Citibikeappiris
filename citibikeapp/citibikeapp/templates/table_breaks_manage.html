@@ -35,12 +35,24 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js" integrity="sha256-FaYRflg3IJpVUN+JgijEHFUYgsn1wS1xRlcKTIgToIo=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js" integrity="sha256-xoE/2szqaiaaZh7goVyF5p9C/qBu9dM3V5utrQaiJMc=" crossorigin="anonymous"></script>
 		
+		<style>
+			textarea {
+			    border: none;
+			    background-color: transparent;
+			    resize: none;
+			    outline: none;
+	    			overflow: auto;
+			}
+		</style>
 		
 		<h1>Manage Default Breaks</h1>
-		<div>
+		<textarea align="left" rows="4" cols="300" disabled="disabled">
 			Only vehicle currently in the Vehicle table are shown here.
 			Time is none or empty if not on shift.
-		</div>
+			For each break of Vehicle on shift, put in the number of HOURS since the shift start time. (You can use decimal number such as 2.5) 
+			If you don't want to assign a shift, uncheck the box for the break, but you still need to put in a number(any number).
+			Quick reference: 5min - 0.08 hr; 15min - 0.25 hr; 30 min - 0.5 hr; 45 min - 0.75 hr
+		</textarea>
 		<br />
 		<div id="TableCont" class="table table-responsive table-hover table-bordered table-sm" >
 			
@@ -81,29 +93,9 @@
 		<script>
 			
 			$.initalBreakTime = function(mydata,vID) {
-				
-				$('input[name="lunchBreak"]').timepicker({'timeFormat': "H:i:s"});
-				$('input[name="shortBreak1"]').timepicker({'timeFormat': "H:i:s"});
-				$('input[name="shortBreak2"]').timepicker({'timeFormat': "H:i:s"});
-
-				$.each(mydata, function(index, value) {
-					//set default value
-					if(value["vID"] == vID && value["tType"]== 16){
-						$('#'+ String(vID) +' input[name=lunchBreak]').timepicker('setTime', parseTimeObject(value["publishTime"]));
-//						$('#'+ String(vID) +' input[name=lunchBreak]').timepicker({
-//							'minTime': value["startTime"].substring(12, 19),
-//  							'showDuration': true});
-					}
-					if(value["vID"] == vID && value["tType"]== 17){
-						$('#'+ String(vID) +' input[name=shortBreak1]').timepicker('setTime', parseTimeObject(value["publishTime"]));
-					}
-					if(value["vID"] == vID && value["tType"]== 18){
-						$('#'+ String(vID) +' input[name=shortBreak2]').timepicker('setTime', parseTimeObject(value["publishTime"]));
-					}
-				});
-
-		
-				
+				$('input[name="shortBreak1"]').val(2);
+				$('input[name="lunchBreak"]').val(4);
+				$('input[name="shortBreak2"]').val(6);
 			};
 			
 			
@@ -112,16 +104,16 @@
 				$(breakForm).append("<input type='number' name='vID' id='vID' style='width: 4em' width='2' value="+ String(vID)+" readonly>");
 				$(breakForm).append("Break1:");
 				$(breakForm).append("<input type='checkbox' name='breaks' value='17' checked>");
-				$(breakForm).append("<input type='time' id='shortBreak1' name='shortBreak1' required>");
+				$(breakForm).append("<input type='number' id='shortBreak1' name='shortBreak1' min='0' max='24' step=.01 required>");
 				
 				$(breakForm).append("Lunch:");
 				$(breakForm).append("<input type='checkbox' name='breaks' value='16' checked>");
-				$(breakForm).append("<input type='time' id='lunchBreak' name='lunchBreak' required>");
+				$(breakForm).append("<input type='number' id='lunchBreak' name='lunchBreak' min='0' max='24' step=.01 required>");
 
 
 				$(breakForm).append("Break2:");
 				$(breakForm).append("<input type='checkbox' name='breaks' value='18' checked>");
-				$(breakForm).append("<input type='time' id='shortBreak2' name='shortBreak2' required>");
+				$(breakForm).append("<input type='number' id='shortBreak2' name='shortBreak2' min='0' max='24' step=.01 required>");
 				
 				$(breakForm).append("<input type='submit' value=&#x2713 class='btn btn-sm'>");
 				return($(breakForm));
