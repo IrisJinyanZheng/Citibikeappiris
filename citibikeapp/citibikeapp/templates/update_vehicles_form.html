@@ -91,12 +91,12 @@
 					}else if(key == 'vName' || key == 'dID1'|| key == 'dID2'){
 						 var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' required></br>"
 
-					}else if(key == 'capacity' || key == 'vBike'|| key == 'tID' ||key == 'vSsID'||key == 'vEsID'||key == 'vNXsID'){
+					}else if(key == 'capacity' || key == 'vBike'|| key == 'vBikeBroken'||key == 'tID' ||key == 'vSsID'||key == 'vEsID'||key == 'vNXsID'){
 						 //the number fields
 						 var inputS = "&nbsp;&nbsp;<input type='number' id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' required></br>"
 
 					}else if (key == 'startTime'|| key == 'endTime'){
-						 var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' required></br>"
+						 var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' readonly='readonly'></br>"
 						
 					}else{
 						var inputS = "&nbsp;&nbsp;<input id='" + key + "' name='" + key + "' placeholder='" + key + "' value = '" + val + "' readonly='readonly'></br>"
