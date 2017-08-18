@@ -38,7 +38,8 @@
 		
 		<h1>Manage Default Breaks</h1>
 		<div>
-			Only vehicle currently in the Vehicle table are shown here. 
+			Only vehicle currently in the Vehicle table are shown here.
+			Time is none or empty if not on shift.
 		</div>
 		<br />
 		<div id="TableCont" class="table table-responsive table-hover table-bordered table-sm" >
@@ -61,6 +62,15 @@
 		}
 	}
 			function parseTimeObject(startT) {
+				if (startT.length > 8){
+					var year2 = parseInt(DateString.substring(0, 4))
+					var month2 = parseInt(DateString.substring(5, 7)) - 1
+					var day2 = parseInt(DateString.substring(8,10))
+					var hour = parseInt(DateString.substring(11, 13))
+					var min = parseInt(DateString.substring(14,16))
+					date = new Date(year2, month2, day2, hour, min, 0)
+					return date
+				}
 				var hour = parseInt(startT.substring(0, 2))
 				var min = parseInt(startT.substring(3,5))
 				date = new Date(year, month, day, hour, min, 0)
@@ -71,39 +81,44 @@
 		<script>
 			
 			$.initalBreakTime = function(mydata,vID) {
-				$('#lunchBreak').timepicker({'timeFormat': "H:i:s"});
-				$('#shortBreak1').timepicker({'timeFormat': "H:i:s"});
-				$('#shortBreak2').timepicker({'timeFormat': "H:i:s"});
-		
+				
+				$('input[name="lunchBreak"]').timepicker({'timeFormat': "H:i:s"});
+				$('input[name="shortBreak1"]').timepicker({'timeFormat': "H:i:s"});
+				$('input[name="shortBreak2"]').timepicker({'timeFormat': "H:i:s"});
+
 				$.each(mydata, function(index, value) {
 					//set default value
 					if(value["vID"] == vID && value["tType"]== 16){
-						$('#lunchBreak').timepicker('setTime', parseTimeObject(value["publishTime"]));
+						$('#'+ String(vID) +' input[name=lunchBreak]').timepicker('setTime', parseTimeObject(value["publishTime"]));
+//						$('#'+ String(vID) +' input[name=lunchBreak]').timepicker({
+//							'minTime': value["startTime"].substring(12, 19),
+//  							'showDuration': true});
 					}
 					if(value["vID"] == vID && value["tType"]== 17){
-						$('#shortBreak1').timepicker('setTime', parseTimeObject(value["publishTime"]));
+						$('#'+ String(vID) +' input[name=shortBreak1]').timepicker('setTime', parseTimeObject(value["publishTime"]));
 					}
 					if(value["vID"] == vID && value["tType"]== 18){
-						$('#shortBreak2').timepicker('setTime', parseTimeObject(value["publishTime"]));
+						$('#'+ String(vID) +' input[name=shortBreak2]').timepicker('setTime', parseTimeObject(value["publishTime"]));
 					}
 				});
+
 		
 				
 			};
 			
 			
 			$.makeBreakForm = function(mydata,vID) {
-				var breakForm = $("<form method='post' style=' display: inline!important;' action='/updateDefaultBreaks'>");
+				var breakForm = $("<form id =" + String(vID) + "  method='post' style=' display: inline!important;' action='/updateDefaultBreaks'>");
 				$(breakForm).append("<input type='number' name='vID' id='vID' style='width: 4em' width='2' value="+ String(vID)+" readonly>");
+				$(breakForm).append("Break1:");
+				$(breakForm).append("<input type='checkbox' name='breaks' value='17' checked>");
+				$(breakForm).append("<input type='time' id='shortBreak1' name='shortBreak1' required>");
 				
 				$(breakForm).append("Lunch:");
 				$(breakForm).append("<input type='checkbox' name='breaks' value='16' checked>");
 				$(breakForm).append("<input type='time' id='lunchBreak' name='lunchBreak' required>");
 
-				$(breakForm).append("Break1:");
-				$(breakForm).append("<input type='checkbox' name='breaks' value='17' checked>");
-				$(breakForm).append("<input type='time' id='shortBreak1' name='shortBreak1' required>");
-				
+
 				$(breakForm).append("Break2:");
 				$(breakForm).append("<input type='checkbox' name='breaks' value='18' checked>");
 				$(breakForm).append("<input type='time' id='shortBreak2' name='shortBreak2' required>");
@@ -117,7 +132,10 @@
 				var table = $("<table border=1 id=Table"+String(vID)+">");
 				var tblHeader = "<thead class='thead-default'><tr>";
 				tblHeader += "<th align='center'>Action</th>";
-				for(var k in mydata[0]) tblHeader += "<th>" + k + "</th>";
+				for (var k in mydata[0]) {
+//					if (k == "startTime" || k == "endTime") {k = "shift " + k;}
+					tblHeader += "<th>" + k + "</th>";
+				}
 				tblHeader += "</tr></thead><tbody>";
 				$(tblHeader).appendTo(table);
 				
@@ -145,7 +163,7 @@
 							 {% if  v["vID"] != -111 %}
 							var table = $.makeTable(data,{{v["vID"]}});
 							var breakform = $.makeBreakForm(data,{{v["vID"]}});
-							var header = "<h4>#{{v["vID"]}} {{v["vName"]}}</h4> <i>{{v["dID1"]}} {{v["dName1"]}}, {{v["dID2"]}} {{v["dName2"]}}, bikes: {{v["vBike"]}}/{{v["capacity"]}}, break:{{v["lunchCount1"]}}/1,{{v["breakCount1"]}}/2;{{v["lunchCount2"]}}/1,{{v["breakCount2"]}}/2 </i> "
+							var header = "<h4 style=' display: inline;'>#{{v["vID"]}} {{v["vName"]}}</h4> <h6 style=' display: inline!important; color:#069'>{{v["startTime"]}}</h6> <br/> <i>{{v["dID1"]}} {{v["dName1"]}}, {{v["dID2"]}} {{v["dName2"]}}, bikes: {{v["vBike"]}}/{{v["capacity"]}}, break:{{v["lunchCount1"]}}/1,{{v["breakCount1"]}}/2;{{v["lunchCount2"]}}/1,{{v["breakCount2"]}}/2 </i> "
 							$(header).appendTo("#TableCont");
 							$(breakform).appendTo("#TableCont");
 							$(table).appendTo("#TableCont");
