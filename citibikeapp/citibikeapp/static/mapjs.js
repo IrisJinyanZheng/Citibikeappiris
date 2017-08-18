@@ -138,7 +138,7 @@ function nystationsLayer(map, mapboxgl, url, icon1, icon2, icon3) {
 
 	window.setInterval(function() {
 		map.getSource('nystations').setData(url);
-	}, 2000); // update every two seconds
+	}, 60000); // update every minute
 
 	map.addSource('nystations', {
 		type: 'geojson',
