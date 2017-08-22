@@ -1,0 +1,29 @@
+
+Classes
+*******
+The classes necessary to run the simulator
+
+StationMap
+===========
+.. autoclass:: StationMap.StationMap
+   :members:
+
+Truck
+========
+.. autoclass:: StationMap.Truck
+   :members:
+
+Station
+========
+.. autoclass:: StationMap.Station
+   :members:
+
+Task
+========
+.. autoclass:: StationMap.Task
+   :members:
+
+Break
+========
+.. autoclass:: StationMap.Break
+   :members:

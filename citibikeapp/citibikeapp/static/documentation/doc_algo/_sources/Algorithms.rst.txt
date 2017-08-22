@@ -1,0 +1,40 @@
+Algorithms
+***********
+
+A group of algorithms used for rebalence routing
+
+- The greedy heuristic used to determine a tasks' score is a feasible task with the highest (change in disappointed
+  customers)/(time required to perform the task) ratio.
+
+
+Pure Greedy Algorithms
+======================
+These algorithms use a pure greedy heuristic in order to decide the next move, without any randomness.
+
+.. automodule:: Algorithms
+   :members: greedy_best, greedy_iterative, greedy_finish
+
+GRASP Algorithms
+================
+These algorithms use a Greedy Randomized Adaptive Search Proceedure in order to decide the next move:
+
+1. Find the top k feasible moves with the highest score
+2. Give each of the top k task a probability in proportion to :math:`2^r` where r is equal to its score
+3. Randomly select one of the top k tasks using the weighted probabilities
+
+.. autofunction:: Algorithms.grasp_best
+.. autofunction:: Algorithms.grasp_iterative
+.. autofunction:: Algorithms.grasp_finish
+
+Specified Algorithms
+====================
+These algorithms generate routes for specific cases.
+
+.. autofunction:: Algorithms.daytime_routing
+
+Miscellaneous
+=============
+These are helper functions used for other algorithms.
+
+.. autofunction:: Algorithms.schedule_task
+.. autofunction:: Algorithms.grasp_time_best

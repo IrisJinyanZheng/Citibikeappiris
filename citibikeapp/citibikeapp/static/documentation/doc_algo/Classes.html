@@ -1,0 +1,611 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Classes &#8212; CitiBike  documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Algorithms" href="Algorithms.html" />
+    <link rel="prev" title="Citi Bike Rebalence Routing Documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Algorithms.html" title="Algorithms"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Citi Bike Rebalence Routing Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CitiBike  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<p>The classes necessary to run the simulator</p>
+<div class="section" id="stationmap">
+<h2>StationMap<a class="headerlink" href="#stationmap" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="StationMap.StationMap">
+<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">StationMap</code><a class="headerlink" href="#StationMap.StationMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the a map of rebalencing stations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stations</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a><em>]</em><em></em>) &#8211; A dictionary that maps the ID of a station in this map to its Station object</li>
+<li><strong>original</strong> (<em>Dict</em><em>[</em><em>int</em><em>,</em><a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a><em>]</em><em></em>) &#8211; A deepcopy of stations when this StationMap was initialized</li>
+<li><strong>forbidden</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>Tuple</em><em>[</em><em>datetime</em><em>, </em><em>datetime</em><em>]</em><em></em>) &#8211; A dictionary that maps a Station ID to a tuple of the start/end datetime for when this station
+is forbidden</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="StationMap.StationMap.add_forbidden_station">
+<code class="descname">add_forbidden_station</code><span class="sig-paren">(</span><em>station</em>, <em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.add_forbidden_station" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a station in this list forbidden for a period of time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station that should be forbidden</li>
+<li><strong>start</strong> (<em>datetime</em>) &#8211; The starting time of when this station is forbidden</li>
+<li><strong>end</strong> (<em>datetime</em>) &#8211; The ending time of when this station is forbidden</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.checkpoint">
+<code class="descname">checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a checkpoint at this StationMap&#8217;s current state. If restore is called after this, the StationMap will
+revert to the state where this checkpoint was made</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.customers">
+<code class="descname">customers</code><span class="sig-paren">(</span><em>time</em>, <em>station</em>, <em>bikes</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.customers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the number of disappointed customers expected at a certain station with a specified number of bikes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time</strong> (<em>timedelta</em>) &#8211; The time to check expected number of disappointed customers</li>
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station that customers are being disappointed by</li>
+<li><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes at this station to examine the effects of</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The number of disappointed customers caused by having this many bikes at this station at this time.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.opt_bikes">
+<code class="descname">opt_bikes</code><span class="sig-paren">(</span><em>time</em>, <em>station</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.opt_bikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the optimal number of bikes that should be at a certain station at a specified time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time</strong> (<em>timedelta</em>) &#8211; The time to check for the number of optimal bikes</li>
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station to check for the number of optimal bikes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The number of bikes at this station that will minimize the number of disappointed customers</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.opt_task">
+<code class="descname">opt_task</code><span class="sig-paren">(</span><em>truck</em>, <em>station=None</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.opt_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the optimal task to perform at this station</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>truck</strong> (<a class="reference internal" href="#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a>) &#8211; The truck that will perform the returned task</li>
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station to perform the returned task at</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The task at this station that will minimize the number of disappointed customers</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#StationMap.Task" title="StationMap.Task">Task</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.restore">
+<code class="descname">restore</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.restore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverts this StationMap back to its original state</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.update_json">
+<code class="descname">update_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.update_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the StatoinMap information from the Citi Bike json feed, then sets its checkpoint at the updated
+state.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="truck">
+<h2>Truck<a class="headerlink" href="#truck" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="StationMap.Truck">
+<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">Truck</code><span class="sig-paren">(</span><em>origin</em>, <em>location</em>, <em>destination</em>, <em>start=datetime.datetime(1</em>, <em>1</em>, <em>1</em>, <em>0</em>, <em>0)</em>, <em>end=datetime.datetime(1</em>, <em>1</em>, <em>1</em>, <em>0</em>, <em>0)</em>, <em>iden=-1</em>, <em>capacity=42</em>, <em>fill=0</em>, <em>broken_bikes=0</em>, <em>breaks=None</em>, <em>rate=30</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies a Rebalencing Truck</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> (<em>int</em>) &#8211; The ID number of the truck. Defaults to -1.</li>
+<li><strong>capacity</strong> (<em>int</em>) &#8211; The number of bikes that can fit on the truck. Defaults to 42.</li>
+<li><strong>fill</strong> (<em>int</em>) &#8211; The number of total bikes (including broken bikes) loaded onto the truck. Defaults to 0.</li>
+<li><strong>broken_bikes</strong> (<em>int</em>) &#8211; The number of broken bikes loaded onto this truck. Defaults to 0</li>
+<li><strong>breaks</strong> (<em>list</em><em>[</em><a class="reference internal" href="#StationMap.Break" title="StationMap.Break"><em>Break</em></a><em>]</em><em></em>) &#8211; List of Breaks scheduled for this truck. Defaults to empty list.</li>
+<li><strong>rate</strong> (<em>int</em>) &#8211; The amount of time in seconds it takes the driver on this truck to move one bike. Defaults to 30 sec.</li>
+<li><strong>origin</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The Station that this truck started its shift at</li>
+<li><strong>location</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The Station where this truck finished its last Task</li>
+<li><strong>destination</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The Station where this truck will return to at the end of its shift</li>
+<li><strong>start</strong> (<em>datetime</em>) &#8211; The starting time of this truck&#8217;s shift</li>
+<li><strong>end</strong> &#8211; The ending time of this truck&#8217;s shift</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="StationMap.Truck.add_bikes">
+<code class="descname">add_bikes</code><span class="sig-paren">(</span><em>station</em>, <em>bikes</em>, <em>broken</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck.add_bikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds bikes to this truck and removes bikes from the station this truck is taking from</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station is truck is taking bikes from</li>
+<li><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes to be added to this truck</li>
+<li><strong>broken</strong> (<em>bool</em>) &#8211; True if the bikes being moved are broken, False if they are normal</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Truck.greedy_move">
+<code class="descname">greedy_move</code><span class="sig-paren">(</span><em>smap</em>, <em>needs_exit=True</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck.greedy_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Greedily finds the task with the highest (change in disappointed customers)/(time to perform task) ratio for
+this truck</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap this truck is on</li>
+<li><strong>needs_exit</strong> (<em>bool</em>) &#8211; Specifies whether time must be allotted for the truck to return to its destination. Returns
+True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The task with the highest score. Returns None if there are no feasible tasks</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#StationMap.Task" title="StationMap.Task">Task</a>, None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Truck.greedy_random_move">
+<code class="descname">greedy_random_move</code><span class="sig-paren">(</span><em>smap</em>, <em>k=5</em>, <em>needs_exit=True</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck.greedy_random_move" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Select a task from the top k tasks with the highest (change in disappointed customers)/(time to perform task)</dt>
+<dd>ratio for this truck, where each task has a probability in proportion to 2 to the power of its score.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap this truck is on</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; Specifies how many tasks should be on the top k list</li>
+<li><strong>needs_exit</strong> (<em>bool</em>) &#8211; Specifies whether time must be allotted for the truck to return to its destination. Returns
+True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The task with the highest score. Returns None if there are no feasible tasks</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#StationMap.Task" title="StationMap.Task">Task</a>, None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Truck.move">
+<code class="descname">move</code><span class="sig-paren">(</span><em>task</em>, <em>smap</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes this truck perform a task</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>task</strong> (<a class="reference internal" href="#StationMap.Task" title="StationMap.Task"><em>Task</em></a>) &#8211; The task this truck is performing</li>
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap this truck is on</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Truck.remove_bikes">
+<code class="descname">remove_bikes</code><span class="sig-paren">(</span><em>station</em>, <em>bikes</em>, <em>broken</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck.remove_bikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes bikes to this truck and adds bikes to the station this truck adding to</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station is truck adding bikes to</li>
+<li><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes to be removed from this truck</li>
+<li><strong>broken</strong> (<em>bool</em>) &#8211; True if the bikes being moved are broken, False if they are normal</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Truck.take_break">
+<code class="descname">take_break</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Truck.take_break" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lets this truck take its&#8217; next break</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="station">
+<h2>Station<a class="headerlink" href="#station" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="StationMap.Station">
+<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">Station</code><span class="sig-paren">(</span><em>index</em>, <em>iden=-1</em>, <em>bikes=0</em>, <em>docks=0</em>, <em>rate=120</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Station" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies a bikeshare station with bikes and docks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> (<em>int</em>) &#8211; The ID number of the station. Defaults to -1</li>
+<li><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes (including broken bikes) currently at this station. Defaults to 0</li>
+<li><strong>docks</strong> (<em>int</em>) &#8211; The number of docks at this station that are empty and not broken. Defaults to 0</li>
+<li><strong>rate</strong> (<em>int</em>) &#8211; The amount of time in seconds it takes for a truck to park at this station. Defaults to 120</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="StationMap.Station.add_bikes">
+<code class="descname">add_bikes</code><span class="sig-paren">(</span><em>bikes</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Station.add_bikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds bikes to this Station</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes to be added</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Station.remove_bikes">
+<code class="descname">remove_bikes</code><span class="sig-paren">(</span><em>bikes</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Station.remove_bikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes bikes from this Station</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes to be removed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="task">
+<h2>Task<a class="headerlink" href="#task" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="StationMap.Task">
+<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>station</em>, <em>bikes=0</em>, <em>to_truck=True</em>, <em>broken=False</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies a rebalencing task for a driver to perform</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station where bikes should be moved.</li>
+<li><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes to be moved. Defaults to 0.</li>
+<li><strong>to_truck</strong> (<em>bool</em>) &#8211; Is true if bikes are to be picked up into the truck; is false if bikes are to be dropped off.
+Defaults to True</li>
+<li><strong>broken</strong> (<em>bool</em>) &#8211; Is true if moving broken bikes; if false if moving regular bikes. Defaults to False.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="StationMap.Task.feasible">
+<code class="descname">feasible</code><span class="sig-paren">(</span><em>truck</em>, <em>smap</em>, <em>needs_exit=True</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task.feasible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Figures out where this task can be completed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>truck</strong> (<a class="reference internal" href="#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a>) &#8211; The truck that is performing this task</li>
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap that this task&#8217;s station is on</li>
+<li><strong>needs_exit</strong> (<em>bool</em>) &#8211; Specifies whether time must be allotted for the truck to return to its destination. Returns
+True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if this task can be completed, and False if it cannot.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Task.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>truck</em>, <em>smap</em>, <em>needs_exit=True</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes changes the number of bikes so that it improves the Station Map and is feasible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>truck</strong> (<a class="reference internal" href="#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a>) &#8211; The truck that is performing this task</li>
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap that this task&#8217;s station is on</li>
+<li><strong>needs_exit</strong> (<em>bool</em>) &#8211; Specifies whether time must be allotted for the truck to return to its destination. Returns
+True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A new task that improves (or maintains) the StationMap and is feasible</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#StationMap.Task" title="StationMap.Task">Task</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Task.improvement">
+<code class="descname">improvement</code><span class="sig-paren">(</span><em>truck</em>, <em>smap</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task.improvement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates how many disappointed customers will be reduced by this task</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>truck</strong> (<a class="reference internal" href="#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a>) &#8211; The truck that is performing this task</li>
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap that this task&#8217;s station is on</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The change in disappointed customers. Positive if the StationMap is improved, negative if it is
+worsened</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.Task.time">
+<code class="descname">time</code><span class="sig-paren">(</span><em>truck</em>, <em>smap</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds how long it takes for this task to be completed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>truck</strong> (<a class="reference internal" href="#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a>) &#8211; The truck that is performing this task</li>
+<li><strong>smap</strong> (<a class="reference internal" href="#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap that this task&#8217;s station is on</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The time in seconds it takes for this truck to complete this task</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="break">
+<h2>Break<a class="headerlink" href="#break" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="StationMap.Break">
+<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">Break</code><span class="sig-paren">(</span><em>start_time</em>, <em>duration</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Break" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies a break period for a truck to take</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start_time</strong> (<em>datetime</em>) &#8211; The date and time of when the break starts</li>
+<li><strong>duration</strong> (<em>int</em>) &#8211; The length of the break in seconds</li>
+<li><strong>end_time</strong> (<em>datetime</em>) &#8211; The date and time of when the break ends. Calculated in initialization with start_time and duration</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Classes</a><ul>
+<li><a class="reference internal" href="#stationmap">StationMap</a></li>
+<li><a class="reference internal" href="#truck">Truck</a></li>
+<li><a class="reference internal" href="#station">Station</a></li>
+<li><a class="reference internal" href="#task">Task</a></li>
+<li><a class="reference internal" href="#break">Break</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Citi Bike Rebalence Routing Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Algorithms.html"
+                        title="next chapter">Algorithms</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Classes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Algorithms.html" title="Algorithms"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Citi Bike Rebalence Routing Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CitiBike  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Ellen Chen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

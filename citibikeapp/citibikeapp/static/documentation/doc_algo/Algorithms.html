@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Algorithms &#8212; CitiBike  documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Classes" href="Classes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Classes.html" title="Classes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CitiBike  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="algorithms">
+<h1>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h1>
+<p>A group of algorithms used for rebalence routing</p>
+<ul class="simple">
+<li>The greedy heuristic used to determine a tasks&#8217; score is a feasible task with the highest (change in disappointed
+customers)/(time required to perform the task) ratio.</li>
+</ul>
+<div class="section" id="pure-greedy-algorithms">
+<h2>Pure Greedy Algorithms<a class="headerlink" href="#pure-greedy-algorithms" title="Permalink to this headline">¶</a></h2>
+<p>These algorithms use a pure greedy heuristic in order to decide the next move, without any randomness.</p>
+<span class="target" id="module-Algorithms"></span><dl class="function">
+<dt id="Algorithms.greedy_best">
+<code class="descclassname">Algorithms.</code><code class="descname">greedy_best</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.greedy_best" title="Permalink to this definition">¶</a></dt>
+<dd><p>A greedy algorithm that calculates the next best greedy move for every truck and appends the best move that is in
+that sets of moves, iterating until each truck has a complete route. Defaults to True for all trucks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination
+by the end of their shift</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Algorithms.greedy_iterative">
+<code class="descclassname">Algorithms.</code><code class="descname">greedy_iterative</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.greedy_iterative" title="Permalink to this definition">¶</a></dt>
+<dd><p>A greedy algorithm that calculates a complete route, consisting of the best greedy moves, for each truck
+one-by-one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination
+by the end of their shift. Defaults to True for all trucks.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Algorithms.greedy_finish">
+<code class="descclassname">Algorithms.</code><code class="descname">greedy_finish</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.greedy_finish" title="Permalink to this definition">¶</a></dt>
+<dd><p>A greedy algorithm that chooses the next best greedy task based for the truck that finished its last task the
+earliest.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
+the end of their shift. Defaults to True for all trucks.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="grasp-algorithms">
+<h2>GRASP Algorithms<a class="headerlink" href="#grasp-algorithms" title="Permalink to this headline">¶</a></h2>
+<p>These algorithms use a Greedy Randomized Adaptive Search Proceedure in order to decide the next move:</p>
+<ol class="arabic simple">
+<li>Find the top k feasible moves with the highest score</li>
+<li>Give each of the top k task a probability in proportion to <span class="math">\(2^r\)</span> where r is equal to its score</li>
+<li>Randomly select one of the top k tasks using the weighted probabilities</li>
+</ol>
+<dl class="function">
+<dt id="Algorithms.grasp_best">
+<code class="descclassname">Algorithms.</code><code class="descname">grasp_best</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>iterations=1</em>, <em>k=5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_best" title="Permalink to this definition">¶</a></dt>
+<dd><p>A GRASP algorithm that calculates the next GRASP-selected task for every truck and appends the best move that is
+in that sets of moves, iterating until each truck has a complete route. Defaults to True for all trucks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>iterations</strong> (<em>int</em>) &#8211; The number of GRASP iterations to run before picking the best solution</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
+the end of their shift</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Algorithms.grasp_iterative">
+<code class="descclassname">Algorithms.</code><code class="descname">grasp_iterative</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>iterations=1</em>, <em>k=5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_iterative" title="Permalink to this definition">¶</a></dt>
+<dd><p>A GRASP algorithm that calculates a complete route, consisting of the selected GRASP moves, for each truck
+one-by-one. Defaults to True for all trucks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>iterations</strong> (<em>int</em>) &#8211; The number of GRASP iterations to run before picking the best solution</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
+the end of their shift</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Algorithms.grasp_finish">
+<code class="descclassname">Algorithms.</code><code class="descname">grasp_finish</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>iterations=1</em>, <em>k=5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_finish" title="Permalink to this definition">¶</a></dt>
+<dd><p>A GRASP algorithm that chooses the next GRASP-selected task based for the truck that finished its last task the
+earliest. Defalts to True for all trucks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>iterations</strong> (<em>int</em>) &#8211; The number of GRASP iterations to run before picking the best solution</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
+the end of their shift</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="specified-algorithms">
+<h2>Specified Algorithms<a class="headerlink" href="#specified-algorithms" title="Permalink to this headline">¶</a></h2>
+<p>These algorithms generate routes for specific cases.</p>
+<dl class="function">
+<dt id="Algorithms.daytime_routing">
+<code class="descclassname">Algorithms.</code><code class="descname">daytime_routing</code><span class="sig-paren">(</span><em>forbidden_stations</em>, <em>prefix_routes</em>, <em>previous_solution</em>, <em>driverless_tasks</em>, <em>shift_end=None</em>, <em>trucks=None</em>, <em>runtime=60</em>, <em>look_ahead=120</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.daytime_routing" title="Permalink to this definition">¶</a></dt>
+<dd><p>An algorithm for moving-horizon routing during the day when many customers are engaging with the StationMap
+system</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>forbidden_stations</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>Tuple</em><em>[</em><em>datetime</em><em>, </em><em>datetime</em><em>]</em><em></em>) &#8211; A dictionary of forbidden stations from now until the end of the look ahead period.</li>
+<li><strong>prefix_routes</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Task" title="StationMap.Task"><em>Task</em></a><em>]</em><em></em><em>]</em><em></em>) &#8211; A dictionary of assigned tasks who&#8217;s station and order cannot change</li>
+<li><strong>previous_solution</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Task" title="StationMap.Task"><em>Task</em></a><em>]</em><em></em><em>]</em><em></em>) &#8211; A dictionary of the previously found best solution.</li>
+<li><strong>driverless_tasks</strong> (<em>List</em><em>[</em><em>Tuple</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Task" title="StationMap.Task"><em>Task</em></a><em>, </em><em>datetime</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A list of driverless tasks to be assigned and their deadlines.</li>
+<li><strong>shift_end</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>datetime</em><em>]</em><em></em>) &#8211; A dictionary of the shift ending times for each truck. Defaults to each truck having no shift end
+time.</li>
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>runtime</strong> (<em>int</em>) &#8211; The amount of time the algorithm should run in seconds. Defaults to 60.</li>
+<li><strong>look_ahead</strong> (<em>int</em>) &#8211; The time period the algorithm will look ahead and calculate a route for in minutes. Defaults to
+120.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p>These are helper functions used for other algorithms.</p>
+<dl class="function">
+<dt id="Algorithms.schedule_task">
+<code class="descclassname">Algorithms.</code><code class="descname">schedule_task</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>task=None</em>, <em>thresh=0.5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.schedule_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Schedules a given task for one of the trucks operating in a StationMap. Out of all the trucks that can feasibly
+complete the task, it selects the truck that can complete it by the earliest time. If no trucks can feasibly
+complete the task finds the maximum number of bikes each truck can move while still finishing the task before the
+end of its shift. Out of all the trucks that can feasibly move bikes that are above a threshold value, it selects
+the truck that can complete it by the earliest time. Does nothing if this is impossible for all trucks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>task</strong> (<a class="reference internal" href="Classes.html#StationMap.Task" title="StationMap.Task"><em>Task</em></a>) &#8211; The task to be assigned to a truck</li>
+<li><strong>thresh</strong> (<em>float</em>) &#8211; The threshold value from 0 to 1. 0 means that the task will be assigned if any truck can go to the
+task&#8217;s station and move any number of bikes. 1 means the task will only be assigned if a truck can go to the station
+and move exactly the number of bikes the task originally had. Defaults to 50%.</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
+the end of their shift. Defaults to False for all trucks.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Algorithms.grasp_time_best">
+<code class="descclassname">Algorithms.</code><code class="descname">grasp_time_best</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>seconds=10</em>, <em>k=5</em>, <em>needs_exit=None</em>, <em>start_score=0</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_time_best" title="Permalink to this definition">¶</a></dt>
+<dd><p>A version of <a class="reference internal" href="#Algorithms.grasp_best" title="Algorithms.grasp_best"><code class="xref py py-meth docutils literal"><span class="pre">grasp_best()</span></code></a> that iterates based on real-life runtime rather than number of iterations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trucks</strong> (<em>List</em><em>[</em><a class="reference internal" href="Classes.html#StationMap.Truck" title="StationMap.Truck"><em>Truck</em></a><em>]</em><em></em>) &#8211; A list of active trucks</li>
+<li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
+<li><strong>seconds</strong> (<em>int</em>) &#8211; The number of seconds the GRASP will run before picking the best solution. Defaults to 10</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from. Defaults to 5</li>
+<li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
+the end of their shift. Defaults to True for all trucks</li>
+<li><strong>start_score</strong> (<em>float</em>) &#8211; The minimum score the algorithm should find if it returns a route. Defualts to 0</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Algorithms</a><ul>
+<li><a class="reference internal" href="#pure-greedy-algorithms">Pure Greedy Algorithms</a></li>
+<li><a class="reference internal" href="#grasp-algorithms">GRASP Algorithms</a></li>
+<li><a class="reference internal" href="#specified-algorithms">Specified Algorithms</a></li>
+<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Classes.html"
+                        title="previous chapter">Classes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Algorithms.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Classes.html" title="Classes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CitiBike  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Ellen Chen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>
