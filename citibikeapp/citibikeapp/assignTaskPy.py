@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: sy
 # @Date:   2017-08-03 21:37:45
-# @Last Modified by:   sy
-# @Last Modified time: 2017-08-04 22:10:20
+# @Last Modified by:   yushangdi
+# @Last Modified time: 2017-08-23 08:57:33
 
 from collections import Counter
 import csv
@@ -59,6 +59,7 @@ def assignTask():
     isMove = request.form['isMove']
     priority = request.form['priority']
 
+    # default value 
     dID1 = -111
     dID2 = -111
 
@@ -87,9 +88,10 @@ def assignTask():
     con = connect_to_database()
     cur = con.cursor()
 
-    resetEstComp(cur, vID)
+    resetEstComp(cur, vID) #set estimate completion time to null
 
     if isMove == '0':
+        """not a moving from A to B task, only 1 task added"""
         tType = request.form['tType']
         fixOrderBeforeInsert(cur,vID,orderNum)
         cur.execute("""INSERT INTO OpenTasks (vID, tType, sID,bikeNum, completionTime, comment, publishTime, dID1, dID2, priority, orderNum,pDL,fixTask) 
@@ -99,7 +101,10 @@ def assignTask():
 
 
     if isMove == '1':
+        """moving from A to B task, 2 tasks added"""
         fixOrderBeforeInsert(cur,vID,orderNum)
+
+        # pick up
         cur.execute("""INSERT INTO OpenTasks (vID, tType, sID,bikeNum, completionTime, comment, publishTime, dID1, dID2, priority, orderNum,pDL,fixTask) 
          VALUES (?,?,?,?,?,?,?,?,?,?,?,0,1)
          """,
@@ -108,6 +113,8 @@ def assignTask():
         orderNum = orderNum + 1
 
         fixOrderBeforeInsert(cur,vID,orderNum)
+
+        # drop off
         cur.execute("""INSERT INTO OpenTasks (vID, tType, sID,bikeNum, completionTime, comment, publishTime, dID1, dID2,priority,orderNum,pDL,fixTask) 
          VALUES (?,?,?,?,?,?,?,?,?,?,?,0,1)
          """,
