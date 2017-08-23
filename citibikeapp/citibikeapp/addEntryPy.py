@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 12:17:30
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-10 14:53:11
+# @Last Modified time: 2017-08-23 07:34:05
 
 
 from collections import Counter
@@ -30,6 +30,7 @@ from citibikeapp import app
 @app.route('/inputTaskType', methods=['POST', 'GET'])
 @login_required
 def inputTaskType():
+    """render task type form html"""
     print "accessing assign task type form"
     return render_template("task_type_form.html", title = "Assign Task Type")
 
@@ -45,7 +46,10 @@ def addTaskType():
     con = connect_to_database()
     cur = con.cursor()
 
+    # add task type to Tasks table
     cur.execute("""INSERT INTO Tasks (tName, deltaBike) VALUES (?,?)""",[tName,deltaBike])
+
+    # add a new field to Drivers for the task type and default to 0
     tTypes = cur.execute("""SELECT * from (SELECT tType from Tasks ORDER BY tType DESC) ORDER BY tType DESC""")
     temp = str(tTypes.fetchone()[0])
     cur.execute("""ALTER TABLE Drivers ADD Field"""+ temp +""" INTEGER;""")
@@ -71,6 +75,7 @@ def success2():
 @app.route('/addDriverForm')
 @login_required
 def addDriverForm():
+    """render add driver form html"""
     tasktypes = execute_query(
         """SELECT tType, tName FROM Tasks
         """)
@@ -92,6 +97,8 @@ def addDriverSubmit():
     con = connect_to_database()
     cur = con.cursor()
 
+    # find how many task types are. Note: each Field_  column correspond to a task type
+    # ex. Field3 corresponds to task type 3
     tTypes = cur.execute("""SELECT tType from Tasks DESC""")
 
     for t in tTypes:
@@ -100,7 +107,10 @@ def addDriverSubmit():
 
     print "got all attributes"
 
+    # add new driver
     cur.execute("""INSERT INTO Drivers (dID, dName""" + columnString+""") VALUES (?,?""" + valuesString+""")""",[dID, dName])
+
+    #add new driver into the DriverShift table
     cur.execute("""INSERT INTO DriversShift (dID, lunchCount, breakCount,disproved) VALUES (?,0,0,0)""",[dID])
 
     con.commit()
