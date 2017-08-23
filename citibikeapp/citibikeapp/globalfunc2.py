@@ -40,6 +40,7 @@ def getNYtimenow():
     return time
 
 def datetimeStringToObject(timeString):
+    """convert a string in format YYYY-MM-DD hh:mm:ss to a datetime object"""
     try:
         year = int(timeString[:4])
         month = int(timeString[5:7])
@@ -52,6 +53,7 @@ def datetimeStringToObject(timeString):
         return None
 
 def timeStringToObject(timeString):
+    """convert a string in format hh:mm:ss to a datetime object with current date"""
     try:
         # year = datetime.now().year
         # month = datetime.now().month

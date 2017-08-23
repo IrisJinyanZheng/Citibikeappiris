@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-03 21:38:51
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-03 23:21:38
+# @Last Modified time: 2017-08-23 10:22:26
 
 
 from collections import Counter
@@ -28,7 +28,7 @@ from citibikeapp import app
 @app.route("/table/<table>")
 @login_required
 def viewtable(table):
-    """List all entries"""
+    """List all entries in a table"""
     if table == "Users":
         print "trying to access Users table through /table"
         abort(404)
@@ -61,18 +61,24 @@ def clearDeletedTasks():
 
 
 class DashTable():
+    """Table to display in the dashboard
+    table_name: string
+    tablehtml: pandas df.to_html result
+    parent: string
+    url_name: string"""
     def __init__(self, table_name,tablehtml,parent,url_name):
         self.table_name = table_name
         self.tablehtml = tablehtml
-        self.parent = parent
-        self.url_name = url_name
+        self.parent = parent # what to display on the button, example: "See All Closed Tasks"
+        self.url_name = url_name # what this table is a subset of, example: "ClosedTasks"
 
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     """Dashboard"""
-    tables = []
+    tables = [] # list of DashTable objects, the tables to display in the dashboard
+    
     con = connect_to_database()
     sql = """SELECT tID, vID, dID1, dID2, sID, completionTime, priority, tType, bikeNum, comment FROM ClosedTasks where status = 0 ORDER BY closeTime DESC limit 5"""
     df = pd.read_sql(sql, con)

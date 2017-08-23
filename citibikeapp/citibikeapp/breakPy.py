@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 23:28:02
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-18 14:14:11
+# @Last Modified time: 2017-08-23 08:59:13
 
 from collections import Counter
 import csv
@@ -44,6 +44,7 @@ def breaksJson():
 @app.route('/manageBreak')
 @login_required
 def manageBreak():
+    """Render the manage Break html"""
     con = connect_to_database()
     sql = """SELECT Vehicles.vID, Vehicles.vName, Vehicles.dID1,  d1.dName as dName1, Vehicles.dID2,  d2.dName as dName2, Vehicles.capacity, 
             Vehicles.vBike, Vehicles.tID, Vehicles.startTime, Vehicles.endTime,
