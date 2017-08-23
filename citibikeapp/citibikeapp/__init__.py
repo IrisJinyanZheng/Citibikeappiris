@@ -16,13 +16,12 @@ from flask_login import LoginManager, UserMixin, login_required,login_user, curr
 from wtforms import Form, BooleanField, StringField, validators
 import numpy as np
 
+# create flask app
+app = Flask(__name__) 
+# allow Cross-Origin Resource Sharing so that the map can access data
+CORS(app) 
 
-
-
-
-app = Flask(__name__)
-CORS(app)
-
+# import common functions and modules
 from globalfunc import * 
 import citibikeapp.assignTaskPy
 import citibikeapp.dashboardPy
@@ -34,13 +33,17 @@ import citibikeapp.searchTaskPy
 import citibikeapp.addEntryPy
 import citibikeapp.breakPy
 import citibikeapp.shiftPy
+import citibikeapp.docPy
 
+
+# add login feature
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.secret_key = 'super secret key'
 
 @app.route('/')
 def hello_world():
+    """default page, just a joke"""
     joke = "Q: What do you get if you cross a bike and a flower? \n A: Bicycle petals! \n "
     sourceurl = 'http://www.jokes4us.com/sportsjokes/cyclingjokes.html'
     return joke+sourceurl
@@ -48,16 +51,22 @@ def hello_world():
 @app.route('/index')
 @login_required
 def index():
+    """index page with some links to display database, usually not used"""
     return render_template("index.html",
                            title='Index')
 
+# configure database
 DATABASE = '/var/www/html/citibikeapp/citibikeapp/citibike_change.db'
 
+# configure flask app
 app.config.from_object(__name__)
 
 ########################################## Login #################################################################
 
 class User(UserMixin):
+    """An instance represents a user
+    id: string representing username
+    password: string representing password"""
 
     def __init__(self, username, password):
         self.id = username
@@ -65,6 +74,8 @@ class User(UserMixin):
 
     @classmethod
     def get(cls,id):
+        """If there is the user exists in the database, initialize a User object and return it, 
+        return None otherwise"""
         result = execute_query("""SELECT * FROM Users Where username = ?
          """,
          [id])
@@ -89,6 +100,7 @@ def load_user(user_id):
 
 @app.route('/login')
 def login():
+    """Log in page"""
     message = 'Wrong Username or Password'
     # if login_attempt!=0:
     #     message = "Wrong Username or password"
@@ -96,6 +108,7 @@ def login():
 
 @app.route('/login2', methods=['GET', 'POST'])
 def login2():
+    """verify login information"""
     print "logging in"
     username = request.form['username']
     password = request.form['password']
