@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 23:28:02
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-26 17:09:00
+# @Last Modified time: 2017-08-26 22:40:09
 
 from collections import Counter
 import csv
@@ -32,7 +32,7 @@ from citibikeapp import app
 @login_required
 def breaksJson():
     con = connect_to_database()
-    sql = """SELECT Breaks.vID, Breaks.tType, Tasks.tName, Breaks.publishTime FROM Breaks 
+    sql = """SELECT Breaks.vID, Breaks.tType, Tasks.tName, Breaks.publishTime,Breaks.publishDateTime FROM Breaks 
         Left JOIN Tasks on Tasks.tType = Breaks.tType""" 
         # left JOIN Vehicles on Vehicles.vID = Breaks.vID ,Vehicles.startTime, Vehicles.endTime
     df = pd.read_sql(sql, con)
