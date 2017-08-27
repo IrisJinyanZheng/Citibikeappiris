@@ -1,11 +1,24 @@
-from StationMap import StationMap, Break
-from copy import copy
 import time
+from copy import copy
 from datetime import datetime, timedelta
 from operator import attrgetter, itemgetter
 
+from StationMap import StationMap, Break
+
 
 def greedy_finish(trucks=None, smap=StationMap(), needs_exit=None):
+    """A greedy algorithm that chooses the next best greedy task based for the truck that finished its last task the
+    earliest.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination by
+        the end of their shift. Defaults to True for all trucks.
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -25,7 +38,7 @@ def greedy_finish(trucks=None, smap=StationMap(), needs_exit=None):
 
     while len(temp_trucks) > 0:
         i = min(temp_trucks, key=attrgetter('time'))
-        if i.breaks and i.time >= i.breaks[0].start_time:
+        while i.breaks and i.time >= i.breaks[0].start_time  - timedelta(minutes=20):
             i.take_break()
         else:
             t = i.greedy_move(smap, needs_exit[i.id])
@@ -40,6 +53,18 @@ def greedy_finish(trucks=None, smap=StationMap(), needs_exit=None):
 
 
 def greedy_iterative(trucks=None, smap=StationMap(), needs_exit=None):
+    """A greedy algorithm that calculates a complete route, consisting of the best greedy moves, for each truck
+    one-by-one.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination
+        by the end of their shift. Defaults to True for all trucks.
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -60,7 +85,7 @@ def greedy_iterative(trucks=None, smap=StationMap(), needs_exit=None):
     for i in temp_trucks:
         t = i.greedy_move(smap, needs_exit[i.id])
         while t is not None:
-            if i.breaks and i.time >= i.breaks[0].start_time:
+            while i.breaks and i.time >= i.breaks[0].start_time - timedelta(minutes=20):
                 i.take_break()
             else:
                 i.move(t, smap)
@@ -72,6 +97,18 @@ def greedy_iterative(trucks=None, smap=StationMap(), needs_exit=None):
 
 
 def greedy_best(trucks=None, smap=StationMap(), needs_exit=None):
+    """A greedy algorithm that calculates the next best greedy move for every truck and appends the best move that is in
+    that sets of moves, iterating until each truck has a complete route. Defaults to True for all trucks.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination
+        by the end of their shift
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -87,44 +124,62 @@ def greedy_best(trucks=None, smap=StationMap(), needs_exit=None):
         temp_trucks.append(copy(trucks[j]))
         temp_trucks[j].visited = []
         temp_trucks[j].route = []
+    incomplete = copy(temp_trucks)
     routes = {}
     tasks = dict.fromkeys([truck.id for truck in trucks])
 
     for i in temp_trucks:
+        while i.breaks and i.time >= i.breaks[0].start_time - timedelta(minutes=20):
+            i.take_break()
         t = i.greedy_move(smap, needs_exit[i.id])
         if t is not None:
             tasks[i.id] = (i, t, t.improvement(i, smap) / t.time(i, smap))
         else:
             routes[i.id] = i.route
             score = score + i.improvement
-            temp_trucks.remove(i)
+            incomplete.remove(i)
             tasks[i.id] = (i, None, -1)
 
-    while len(temp_trucks) > 0:
+    while len(incomplete) > 0:
         next_truck = max(tasks.values(), key=itemgetter(2))[0]
         next_task = tasks[next_truck.id][1]
 
         if next_task is not None:
-            if next_truck.breaks and next_truck.time >= next_truck.breaks[0].start_time:
+            next_truck.move(next_task, smap)
+            while next_truck.breaks and next_truck.time >= next_truck.breaks[0].start_time - timedelta(minutes=20):
                 next_truck.take_break()
-            else:
-                next_truck.move(next_task, smap)
 
             for i in temp_trucks:
-                if tasks[i.id][1].station == next_task.station:
+                if tasks[i.id][1] is not None and tasks[i.id][1].station == next_task.station:
                     t = i.greedy_move(smap, needs_exit[i.id])
                     if t is not None:
                         tasks[i.id] = (i, t, t.improvement(i, smap) / t.time(i, smap))
                     else:
                         routes[i.id] = i.route
                         score = score + i.improvement
-                        temp_trucks.remove(i)
+                        incomplete.remove(i)
                         tasks[i.id] = (i, None, -1)
 
     return routes, score
 
 
 def grasp_finish(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=None):
+    """A GRASP algorithm that chooses the next GRASP-selected task based for the truck that finished its last task the
+    earliest.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param iterations: The number of GRASP iterations to run before picking the best solution
+    :type iterations: int
+    :param k: The length of the k list of tasks the GRASP will choose from
+    :type k: int
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination by
+        the end of their shift. Defaults to all trucks needing to return to their final destination.
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -151,7 +206,7 @@ def grasp_finish(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=N
 
         while len(temp_trucks) > 0:
             i = min(temp_trucks, key=attrgetter('time'))
-            if i.breaks and i.time >= i.breaks[0].start_time:
+            while i.breaks and i.time >= i.breaks[0].start_time - timedelta(minutes=20):
                 i.take_break()
             else:
                 t = i.greedy_random_move(smap, k, needs_exit[i.id])
@@ -170,6 +225,22 @@ def grasp_finish(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=N
 
 
 def grasp_iterative(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=None):
+    """A GRASP algorithm that calculates a complete route, consisting of the selected GRASP moves, for each truck
+    one-by-one.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param iterations: The number of GRASP iterations to run before picking the best solution
+    :type iterations: int
+    :param k: The length of the k list of tasks the GRASP will choose from
+    :type k: int
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination by
+        the end of their shift. Defaults to all trucks needing to return to their final destination.
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -195,7 +266,7 @@ def grasp_iterative(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exi
         for j in temp_trucks:
             t = j.greedy_random_move(smap, k, needs_exit[j.id])
             while t is not None:
-                if j.breaks and j.time >= j.breaks[0].start_time:
+                while j.breaks and j.time >= j.breaks[0].start_time - timedelta(minutes=20):
                     j.take_break()
                 else:
                     j.move(t, smap)
@@ -214,6 +285,22 @@ def grasp_iterative(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exi
 
 
 def grasp_best(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=None):
+    """A GRASP algorithm that calculates the next GRASP-selected task for every truck and appends the best move that is
+    in that sets of moves, iterating until each truck has a complete route.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param iterations: The number of GRASP iterations to run before picking the best solution
+    :type iterations: int
+    :param k: The length of the k list of tasks the GRASP will choose from
+    :type k: int
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination by
+        the end of their shift. Defaults to all trucks needing to return to their final destination.
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -241,6 +328,8 @@ def grasp_best(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=Non
         tasks = dict.fromkeys([truck.id for truck in trucks])
 
         for truck in temp_trucks:
+            while truck.breaks and truck.time >= truck.breaks[0].start_time - timedelta(minutes=20):
+                truck.take_break()
             t = truck.greedy_random_move(smap, k, needs_exit[truck.id])
             if t is not None:
                 tasks[truck.id] = (truck, t, t.improvement(truck, smap) / t.time(truck, smap))
@@ -255,10 +344,9 @@ def grasp_best(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=Non
             next_task = tasks[next_truck.id][1]
 
             if next_task is not None:
-                if next_truck.breaks and next_truck.time >= next_truck.breaks[0].start_time:
+                next_truck.move(next_task, smap)
+                while next_truck.breaks and next_truck.time >= next_truck.breaks[0].start_time - timedelta(minutes=20):
                     next_truck.take_break()
-                else:
-                    next_truck.move(next_task, smap)
 
                 for truck in temp_trucks:
                     if tasks[truck.id][1] is not None and tasks[truck.id][1].station == next_task.station:
@@ -280,6 +368,27 @@ def grasp_best(trucks=None, smap=StationMap(), iterations=1, k=5, needs_exit=Non
 
 
 def schedule_task(trucks=None, smap=StationMap(), task=None, thresh=0.5, needs_exit=None):
+    """ Schedules a given task for one of the trucks operating in a StationMap. Out of all the trucks that can feasibly
+    complete the task, it selects the truck that can complete it by the earliest time. If no trucks can feasibly
+    complete the task finds the maximum number of bikes each truck can move while still finishing the task before the
+    end of its shift. Out of all the trucks that can feasibly move bikes that are above a threshold value, it selects
+    the truck that can complete it by the earliest time. Does nothing if this is impossible for all trucks.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param task: The task to be assigned to a truck
+    :type task: Task
+    :param thresh: The threshold value from 0 to 1. 0 means that the task will be assigned if any truck can go to the
+        task's station and move any number of bikes. 1 means the task will only be assigned if a truck can go to the
+        station and move exactly the number of bikes the task originally had. Defaults to 50%.
+    :type thresh: float
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination by
+        the end of their shift. Defaults to all trucks not needing to return to their final destination.
+    :type needs_exit: Dict[bool]
+
+    """
     if trucks is None:
         trucks = []
     if needs_exit is None:
@@ -324,7 +433,24 @@ def schedule_task(trucks=None, smap=StationMap(), task=None, thresh=0.5, needs_e
     return scheduled_truck, scheduled_task
 
 
-def grasp_time_best(trucks=None, smap=StationMap(), seconds=1, k=5, needs_exit=None, start_score=0):
+def grasp_time_best(trucks=None, smap=StationMap(), seconds=10, k=5, needs_exit=None, start_score=0):
+    """A version of :meth:`grasp_best` that iterates based on real-life runtime rather than number of iterations.
+
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param smap: The StationMap the algorithm is working on
+    :type smap: StationMap
+    :param seconds: The number of seconds the GRASP will run before picking the best solution. Defaults to 10
+    :type seconds: int
+    :param k: The length of the k list of tasks the GRASP will choose from. Defaults to 5
+    :type k: int
+    :param needs_exit: A dictionary that describes which trucks in the truck list must return to their destination by
+        the end of their shift. Defaults to all trucks needing to return to their final destination.
+    :type needs_exit: Dict[bool]
+    :param start_score: The minimum score the algorithm should find if it returns a route. Defaults to 0
+    :type start_score: float
+
+    """
     start = time.time()
 
     if trucks is None:
@@ -354,6 +480,8 @@ def grasp_time_best(trucks=None, smap=StationMap(), seconds=1, k=5, needs_exit=N
         tasks = dict.fromkeys([truck.id for truck in trucks])
 
         for truck in temp_trucks:
+            while truck.breaks and truck.time >= truck.breaks[0].start_time - timedelta(minutes=20):
+                truck.take_break()
             t = truck.greedy_random_move(smap, k, needs_exit[truck.id])
             if t is not None:
                 tasks[truck.id] = (truck, t, t.improvement(truck, smap) / t.time(truck, smap))
@@ -368,10 +496,9 @@ def grasp_time_best(trucks=None, smap=StationMap(), seconds=1, k=5, needs_exit=N
             next_task = tasks[next_truck.id][1]
 
             if next_task is not None:
-                if next_truck.breaks and next_truck.time >= next_truck.breaks[0].start_time:
+                next_truck.move(next_task, smap)
+                while next_truck.breaks and next_truck.time >= next_truck.breaks[0].start_time - timedelta(minutes=20):
                     next_truck.take_break()
-                else:
-                    next_truck.move(next_task, smap)
 
                 for truck in temp_trucks:
                     if tasks[truck.id][1] is not None and tasks[truck.id][1].station == next_task.station:
@@ -394,7 +521,35 @@ def grasp_time_best(trucks=None, smap=StationMap(), seconds=1, k=5, needs_exit=N
 
 def daytime_routing(forbidden_stations, prefix_routes, previous_solution, driverless_tasks,
                     shift_end=None, trucks=None, runtime=60, look_ahead=120):
+    """An algorithm for moving-horizon routing during the day when many customers are engaging with the StationMap
+    system
+
+    :param forbidden_stations: A dictionary of forbidden stations from now until the end of the look ahead period.
+    :type forbidden_stations: Dict[int, Tuple[datetime, datetime]
+    :param prefix_routes: A dictionary of assigned tasks who's station and order cannot change
+    :type prefix_routes: Dict[int, List[Task]]
+    :param previous_solution: A dictionary of the previously found best solution.
+    :type previous_solution: Dict[int, List[Task]]
+    :param driverless_tasks: A list of driverless tasks to be assigned and their deadlines.
+    :type driverless_tasks: List[Tuple[Task, datetime]]
+    :param shift_end: A dictionary of the shift ending times for each truck. Defaults to each truck having no shift end
+        time.
+    :type shift_end: Dict[int, datetime]
+    :param trucks: A list of active trucks
+    :type trucks: List[Truck]
+    :param runtime: The amount of time the algorithm should run in seconds. Defaults to 60.
+    :type runtime: int
+    :param look_ahead: The time period the algorithm will look ahead and calculate a route for in minutes. Defaults to
+        120.
+    :type look_ahead: int
+
+    """
     start = time.time()
+
+    fixed_tasks = {}  # Dict of the fixed tasks for each truck
+    assigned_driverless_tasks = {}  # Dict of the assigned driverless tasks for each truck
+    best_route = {}  # Dict of the best route found after performing fixed/driverless tasks for each truck
+    best_score = 0
 
     if prefix_routes is None:
         prefix_routes = dict.fromkeys([truck.id for truck in trucks])
@@ -429,7 +584,6 @@ def daytime_routing(forbidden_stations, prefix_routes, previous_solution, driver
             needs_exit[id_number] = True
 
     # Append prefix route to truck
-    fixed_tasks = {}
     for truck in adapted_trucks:
         if prefix_routes.get(truck.id) is None:
             route = []
@@ -452,24 +606,24 @@ def daytime_routing(forbidden_stations, prefix_routes, previous_solution, driver
 
                 truck.move(opt_task, smap)
 
-        # Take a break after prefix route if the truck is due for one
-        if truck.breaks and truck.time >= truck.breaks[0].start_time:
-            truck.take_break()
         # Clear route after truck performs fixed tasks
         fixed_tasks[truck.id] = truck.route
         truck.route = []
 
+        # Take a break after prefix route if the truck is due for one
+        while truck.breaks and truck.time >= truck.breaks[0].start_time - timedelta(minutes=20):
+            truck.take_break()
+
     # Assign driverless tasks
-    assigned_driverless_tasks = {}
     for task in driverless_tasks:
         assign_task = schedule_task(adapted_trucks, smap, task[0])
         if assign_task[1] is not None:
             assign_task[0].move(assign_task[1], smap)
+            # Take a break after prefix route if the truck is due for one
+            while truck.breaks and truck.time >= truck.breaks[0].start_time - timedelta(minutes=20):
+                truck.take_break()
 
     for truck in adapted_trucks:
-        # Take a break after prefix route if the truck is due for one
-        if truck.breaks and truck.time >= truck.breaks[0].start_time:
-            truck.take_break()
         # Clear route after assigning driverless tasks
         assigned_driverless_tasks[truck.id] = truck.route
         truck.route = []
@@ -487,8 +641,7 @@ def daytime_routing(forbidden_stations, prefix_routes, previous_solution, driver
         best_route = algo_output[0]
         best_score = algo_output[1]
     else:
-        best_route = {}
-        best_score = 0
+        # If there is a previous solution, evaluate it
         for truck in temp_trucks:
             if previous_solution.get(truck.id) is None or previous_solution[truck.id] == []:
                 route = greedy_best([truck], smap, needs_exit)[0][truck.id]
@@ -521,6 +674,7 @@ def daytime_routing(forbidden_stations, prefix_routes, previous_solution, driver
     # Run greedy for remainder
     algo_output = grasp_time_best(temp_trucks, smap, runtime - time.time() + start, 5, needs_exit, best_score)
 
+    # Set best route to GRASP route, if the GRASP route is superior
     if algo_output[1] > best_score:
         best_route = algo_output[0]
 

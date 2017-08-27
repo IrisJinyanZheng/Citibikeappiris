@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-09 14:17:42
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-26 22:03:29
+# @Last Modified time: 2017-08-27 09:11:49
 
 from collections import Counter
 import csv
@@ -200,9 +200,9 @@ def create_previous_solutions(con,smap):
         bikes = int(row["bikeNum"])
         
         #pick up or drop of bikes
-        to_truck = False
+        pickup = False
         if int(row["deltaBike"]) > 0:
-            to_truck = True
+            pickup = True
 
         # if a task involve broken bikes 
         broken = False
@@ -216,7 +216,7 @@ def create_previous_solutions(con,smap):
         elif int(row["tType"])== 17 or int(row["tType"])== 18:
             task = Break(datetimeStringToObject(str(row["publishTime"])),15)
         else:
-            task = Task(station, bikes=bikes, to_truck=to_truck, broken=broken)
+            task = Task(station, bikes=bikes, pickup=pickup, broken=broken)
 
         if int(row["vID"]) == -111:
             # create driverless tasks list
@@ -233,7 +233,7 @@ def create_previous_solutions(con,smap):
 
 def parseForType(task):
     if isinstance(task, Task):
-        if task.to_truck:
+        if task.pickup:
             if task.broken:
                 return 2
             else:
