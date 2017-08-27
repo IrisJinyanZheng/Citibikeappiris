@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-09 14:17:42
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-27 09:11:49
+# @Last Modified time: 2017-08-27 14:54:43
 
 from collections import Counter
 import csv
@@ -77,7 +77,7 @@ def parse_breaks(con):
     """Parse and return a dictionary with vehicle id(int) -> list of Break object"""
 
     # create a dictionary from vehicle ID to how many breaks one of the two drivers
-    # on the vehicle has had. 
+    # on the vehicle has had. {vID int -> [lunchCount int, breakCount int]}
     vb_dic = {}
     sql = """SELECT * FROM DriversShift """
     df = pd.read_sql(sql, con)
@@ -88,7 +88,6 @@ def parse_breaks(con):
             vb_dic[int(row["vID"])] = [lunchCount,breakCount]
 
     break_dic = {}
-    # breaks = []
     sql = """SELECT * FROM Breaks """
     df = pd.read_sql(sql, con)
     for index, row in df.iterrows():
@@ -112,14 +111,7 @@ def parse_breaks(con):
         #   break_duration = 15
         break_time = datetimeStringToObject(str(row["publishDateTime"]))
         break_dic[vID] = break_dic.get(vID, []) + [Break(break_time,break_duration)]
-        # break_time = break_time + timedelta(days=1) #the same break on next day, account for crossing day breaks
-        # breaks.append(Break(break_time,break_duration))
-        # break_dic[int(row["vID"])] = breaks
     return break_dic
-
-# def estimate_day_shift(con):
-#   sql = """SELECT MIN(endTime) FROM Vehicles"""
-#   result = con.execute(sql).fetchall()[0][0]
 
 def create_shift_ends(con):
     """Return a dictionary with vehicle ID (int) -> datetime object"""
@@ -177,6 +169,7 @@ def create_vehicle_dic(con,smap):
     return trucks
 
 def add_to_solution(solutions, truck, task):
+    """helper function, append task to solution"""
     try:
         solutions[truck].append(task)
     except:
@@ -232,6 +225,7 @@ def create_previous_solutions(con,smap):
     return {"solution":previous_solution, "prefix":prefix_routes,"driverless":driverless_tasks}
 
 def parseForType(task):
+    """Return the task type of the task in integter """
     if isinstance(task, Task):
         if task.pickup:
             if task.broken:
@@ -256,7 +250,7 @@ def parseForType(task):
 
 
 def update_fixed_tasks(cur,new_prefix_routes):
-    # update fixed tasks
+    """update fixed tasks' bike number in database"""
     for vID in new_prefix_routes:
         for task in new_prefix_routes[vID]:
             if isinstance(task,Task):
@@ -267,7 +261,7 @@ def update_fixed_tasks(cur,new_prefix_routes):
             # if isinstance(task,Break): #don't update break
 
 def assign_driverless_tasks(cur,assigned_driverless):
-    #assign driverless tasks and delete them from -111 truck
+    """Update driverless tasks' vIDs to real vehicles and delete them from -111 truck"""
     for vID in assigned_driverless:
         for task in assigned_driverless[vID]:
             orderNum = getNextFixOrderNum(cur, vID)
@@ -290,15 +284,18 @@ def assign_driverless_tasks(cur,assigned_driverless):
                 assign_algo_break(cur, task, vID, dID1, dID2, orderNum, fixTask)
                 
 def available_tID(cur,vID):
+    """Return the smallest tID in OpenTasksTemp table, which is not in OpenTasks table, return None if no such tID is found"""
     task_search = execute_query(cur,"""SELECT MIN(tID) from OpenTasksTemp""")
     tID = task_search[0][0]
     if tID is None:
         return None
     if is_tID_in_Open(cur,tID):
+        # if the tID is in OpenTasks table, find the next smallest one
         return available_tID(cur,vID)
     return tID
 
 def is_tID_in_Open(cur,tID):
+    """Return True if tID is in OpenTasks table"""
     task_search2 = execute_query(cur,"""SELECT tID from OpenTasks where tID=?""",[tID])
     cur.execute("""DELETE FROM OpenTasksTemp WHERE tID = ?""",[tID])#won't use this tID anymore, either insert or exist in opentasks table
     if len(task_search2) == 0:
@@ -307,18 +304,21 @@ def is_tID_in_Open(cur,tID):
         return True
 
 def similar_tID(cur,vID,sID,tType):
-    """return the task ID if found one , return None otherwise"""
+    """Return a reusable task ID if found one , return None otherwise"""
+    # find if the task is generated before
     task_search = execute_query(cur,"""SELECT tID from OpenTasksTemp where vID=? and sID = ? and tType = ? and fixTask = 0 and vID != -111""",[vID, sID, tType])
-    if len(task_search) == 0:
+    
+    if len(task_search) == 0: #not generated before
         return available_tID(cur,vID)
-    else:
+    else: #generated before
         tID = task_search[0][0]
-        if not is_tID_in_Open(cur,tID):
+        if not is_tID_in_Open(cur,tID): #check the tID is not in OpenTasks table
             return tID
         else:
             return available_tID(cur,vID)
 
 def assign_algo_break(cur, task, vID, dID1, dID2, orderNum, fixTask):
+    """Helper function, add a break task to databse"""
     tType = parseForType(task)
 
     nowTime = getNYtimenow()
@@ -329,20 +329,21 @@ def assign_algo_break(cur, task, vID, dID1, dID2, orderNum, fixTask):
     bikeNum = 0
     comment = None
 
-    tID = similar_tID(cur,vID,sID,tType)
+    tID = similar_tID(cur,vID,sID,tType) #reuse task ID 
 
-    if tID is None:
+    if tID is None: #add with a new tID (task ID)
         cur.execute("""INSERT INTO OpenTasks (publishTime, vID, tType, sID,bikeNum, completionTime, comment, dID1, dID2, priority, orderNum,pDL,fixTask) 
          VALUES (?,?,?,?,?,?,?,?,?,?,?,0,?)
             """,
           [nowTime, vID, tType, sID, bikeNum, completionTime, comment, dID1, dID2, priority, orderNum, fixTask])
-    else:
+    else: # add with old tID(taskID) 
         cur.execute("""INSERT INTO OpenTasks (tID, publishTime, vID, tType, sID,bikeNum, completionTime, comment, dID1, dID2, priority, orderNum,pDL,fixTask) 
          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0,?)
             """,
           [tID, nowTime, vID, tType, sID, bikeNum, completionTime, comment, dID1, dID2, priority, orderNum, fixTask])
 
 def assign_algo_regular_task(cur, task, vID, dID1, dID2, orderNum, fixTask):
+    """Helper function for assign_algo_tasks, add a non-break task to databse"""
     nowTime = getNYtimenow()
     bikeNum = task.bikes
     sID = task.station.id
@@ -351,36 +352,37 @@ def assign_algo_regular_task(cur, task, vID, dID1, dID2, orderNum, fixTask):
     comment = None
     priority = 1
 
-    tID = similar_tID(cur,vID,sID,tType)
+    tID = similar_tID(cur,vID,sID,tType) #reuse task ID 
 
-    if tID is None:
+    if tID is None: #add with a new tID (task ID)
         cur.execute("""INSERT INTO OpenTasks (publishTime, vID, tType, sID,bikeNum, completionTime, comment, dID1, dID2, priority, orderNum,pDL,fixTask) 
          VALUES (?,?,?,?,?,?,?,?,?,?,?,0,?)
             """,
           [nowTime, vID, tType, sID, bikeNum, completionTime, comment, dID1, dID2, priority, orderNum, fixTask])
-    else:
+    else: # add with old tID(taskID) 
         cur.execute("""INSERT INTO OpenTasks (tID, publishTime, vID, tType, sID,bikeNum, completionTime, comment, dID1, dID2, priority, orderNum,pDL,fixTask) 
          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0,?)
             """,
           [tID, nowTime, vID, tType, sID, bikeNum, completionTime, comment, dID1, dID2, priority, orderNum, fixTask])
 
 def assign_algo_tasks(cur, algo_tasks):
+    """Add algorithm generated tasks to database"""
     for vID in algo_tasks:
         dIDs = execute_query(cur,"""SELECT dID1, dID2 FROM Vehicles Where vID = ?""",[vID])
         dID1 = dIDs[0][0]
         dID2 = dIDs[0][1]
         for task in algo_tasks[vID]:
-            orderNum = getNextOrderNum(cur,vID)
+            orderNum = getNextOrderNum(cur,vID) #get the order of the task
             fixTask = 0
             if orderNum == 1:
-                fixTask = 1
+                fixTask = 1 #fix the task if it's the first task
             if isinstance(task, Task):
-                assign_algo_regular_task(cur, task, vID, dID1, dID2, orderNum, fixTask)
+                assign_algo_regular_task(cur, task, vID, dID1, dID2, orderNum, fixTask) #assign a task
             if isinstance(task, Break):
-                assign_algo_break(cur, task, vID, dID1, dID2, orderNum, fixTask)
+                assign_algo_break(cur, task, vID, dID1, dID2, orderNum, fixTask) #assign a break
 
 def complete_dic(trucks,route_dict):
-    # better if don;t use this method
+    # better if don;t use this method, currently not used
     """if a vehicle is not in the dictionary, create v:[] in the dictionary"""
     for truck in trucks:
         try:
@@ -388,7 +390,7 @@ def complete_dic(trucks,route_dict):
         except KeyError, e:
             route_dict[truck.id] = []
 
-def run_daytime_algo(con, smap):
+def run_daytime_algo(con, smap, look_ahead, runtime):
     trucks_dic = create_vehicle_dic(con,smap)
     trucks = trucks_dic.values() #list of trucks
     forbidden_stations = create_fbs(con,smap)
@@ -398,19 +400,20 @@ def run_daytime_algo(con, smap):
     previous_solution = solution_dic["solution"]
     driverless_tasks = solution_dic["driverless"]
 
-    with open("forbidden_stations0.pkl", 'w') as input:
-        pickle.dump(forbidden_stations, input)
-    with open("prefix_routes0.pkl", 'w') as input:
-        pickle.dump(prefix_routes, input)
-    with open("previous_solution0.pkl", 'w') as input:
-        pickle.dump(previous_solution, input)
-    with open("driverless_tasks0.pkl", 'w') as input:
-        pickle.dump(driverless_tasks, input)
-    with open("shift_end0.pkl", 'w') as input:
-        pickle.dump(shift_end, input)
-    with open("trucks0.pkl", 'w') as input:
-        pickle.dump(trucks, input)
-    new_solutions = Algorithms.daytime_routing(forbidden_stations, prefix_routes, previous_solution, driverless_tasks, shift_end=shift_end,trucks=trucks, runtime=45, look_ahead=120)
+    # create pickle files to record input
+    # with open("forbidden_stations0.pkl", 'w') as input:
+    #     pickle.dump(forbidden_stations, input)
+    # with open("prefix_routes0.pkl", 'w') as input:
+    #     pickle.dump(prefix_routes, input)
+    # with open("previous_solution0.pkl", 'w') as input:
+    #     pickle.dump(previous_solution, input)
+    # with open("driverless_tasks0.pkl", 'w') as input:
+    #     pickle.dump(driverless_tasks, input)
+    # with open("shift_end0.pkl", 'w') as input:
+    #     pickle.dump(shift_end, input)
+    # with open("trucks0.pkl", 'w') as input:
+    #     pickle.dump(trucks, input)
+    new_solutions = Algorithms.daytime_routing(forbidden_stations, prefix_routes, previous_solution, driverless_tasks, shift_end=shift_end,trucks=trucks, runtime=runtime, look_ahead=look_ahead)
 
     # clear memory
     del trucks_dic
@@ -435,28 +438,28 @@ def assign_tasks(cur,new_solutions):
     assign_algo_tasks(cur, algo_tasks)
     cur.execute("""DELETE FROM OpenTasksTemp where fixTask = 0 and vID != -111""") #clear table for search
 
-def greedyalgo(con):   
+def greedyalgo(con, look_ahead, runtime):   
     urlfix = "/var/www/html/citibikeapp/citibikeapp/Algo/Greedy3/"
     cur = con.cursor()
     smap = create_smap()
     # add_fbs(con,smap)
 
-    new_solutions = run_daytime_algo(con, smap)
+    new_solutions = run_daytime_algo(con, smap, look_ahead, runtime)
     assign_tasks(cur,new_solutions)
 
 
 if __name__ == '__main__':
+
+    # parse command line arguments
     parser = argparse.ArgumentParser()
     help_str = "first argument is how long in real time minutes does the algorithm predicts;" + "second argument is how many minutes does the algorithm itself runs"
-    parser.add_argument("-n","--night", help=help_str, nargs='+', type=int, default=(120,1))
+    parser.add_argument("-n","--night", help=help_str, nargs='+', type=int, default=(120,45))
     args = parser.parse_args()
     look_ahead=int(args.night[0])
     runtime=int(args.night[1]) 
 
     con = sqlite3.connect(DATABASE)
-    greedyalgo(con)
-    # test(con)
-    # smap = create_smap()
-    # run_daytime_algo(con, smap)
+    greedyalgo(con, look_ahead, runtime)
+ 
     con.commit()
     con.close()
