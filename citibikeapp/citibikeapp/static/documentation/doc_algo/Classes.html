@@ -63,7 +63,7 @@
 <dl class="class">
 <dt id="StationMap.StationMap">
 <em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">StationMap</code><a class="headerlink" href="#StationMap.StationMap" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specifies the a map of rebalencing stations</p>
+<dd><p>Specifies a map of rebalencing stations</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -98,15 +98,8 @@ is forbidden</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="StationMap.StationMap.checkpoint">
-<code class="descname">checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.checkpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a checkpoint at this StationMap&#8217;s current state. If restore is called after this, the StationMap will
-revert to the state where this checkpoint was made</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="StationMap.StationMap.customers">
-<code class="descname">customers</code><span class="sig-paren">(</span><em>time</em>, <em>station</em>, <em>bikes</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.customers" title="Permalink to this definition">¶</a></dt>
+<dt id="StationMap.StationMap.compute_disappointed_customers">
+<code class="descname">compute_disappointed_customers</code><span class="sig-paren">(</span><em>time</em>, <em>station</em>, <em>bikes</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.compute_disappointed_customers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the number of disappointed customers expected at a certain station with a specified number of bikes</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -130,8 +123,15 @@ revert to the state where this checkpoint was made</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="StationMap.StationMap.opt_bikes">
-<code class="descname">opt_bikes</code><span class="sig-paren">(</span><em>time</em>, <em>station</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.opt_bikes" title="Permalink to this definition">¶</a></dt>
+<dt id="StationMap.StationMap.create_checkpoint">
+<code class="descname">create_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.create_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a checkpoint at this StationMap&#8217;s current state. If restore is called after this, the StationMap will
+revert to the state where this checkpoint was made</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="StationMap.StationMap.find_optimal_number_of_bikes">
+<code class="descname">find_optimal_number_of_bikes</code><span class="sig-paren">(</span><em>time</em>, <em>station</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.find_optimal_number_of_bikes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the optimal number of bikes that should be at a certain station at a specified time</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -186,7 +186,7 @@ revert to the state where this checkpoint was made</p>
 <dl class="method">
 <dt id="StationMap.StationMap.update_json">
 <code class="descname">update_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.StationMap.update_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the StatoinMap information from the Citi Bike json feed, then sets its checkpoint at the updated
+<dd><p>Updates the StationMap information from the Citi Bike json feed, then sets its checkpoint at the updated
 state.</p>
 </dd></dl>
 
@@ -395,7 +395,7 @@ True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li
 <h2>Task<a class="headerlink" href="#task" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="StationMap.Task">
-<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>station</em>, <em>bikes=0</em>, <em>to_truck=True</em>, <em>broken=False</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">StationMap.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>station</em>, <em>bikes=0</em>, <em>pickup=True</em>, <em>broken=False</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies a rebalencing task for a driver to perform</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -404,7 +404,7 @@ True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
 <li><strong>station</strong> (<a class="reference internal" href="#StationMap.Station" title="StationMap.Station"><em>Station</em></a>) &#8211; The station where bikes should be moved.</li>
 <li><strong>bikes</strong> (<em>int</em>) &#8211; The number of bikes to be moved. Defaults to 0.</li>
-<li><strong>to_truck</strong> (<em>bool</em>) &#8211; Is true if bikes are to be picked up into the truck; is false if bikes are to be dropped off.
+<li><strong>pickup</strong> (<em>bool</em>) &#8211; Is true if bikes are to be picked up into the truck; is false if bikes are to be dropped off.
 Defaults to True</li>
 <li><strong>broken</strong> (<em>bool</em>) &#8211; Is true if moving broken bikes; if false if moving regular bikes. Defaults to False.</li>
 </ul>
@@ -467,7 +467,7 @@ True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li
 <dl class="method">
 <dt id="StationMap.Task.improvement">
 <code class="descname">improvement</code><span class="sig-paren">(</span><em>truck</em>, <em>smap</em><span class="sig-paren">)</span><a class="headerlink" href="#StationMap.Task.improvement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates how many disappointed customers will be reduced by this task</p>
+<dd><p>Calculates by how much the number of disappointed customers is reduced through this task</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -478,8 +478,8 @@ True if it needs to return, and False if it doesn&#8217;t. Defaults to True.</li
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The change in disappointed customers. Positive if the StationMap is improved, negative if it is
-worsened</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The change in disappointed customers. Positive if the StationMap has less expected, disappointed
+customers, negative if it has more expected, disappointed customers</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>

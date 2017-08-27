@@ -137,7 +137,7 @@ the end of their shift. Defaults to True for all trucks.</li>
 <dt id="Algorithms.grasp_best">
 <code class="descclassname">Algorithms.</code><code class="descname">grasp_best</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>iterations=1</em>, <em>k=5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_best" title="Permalink to this definition">¶</a></dt>
 <dd><p>A GRASP algorithm that calculates the next GRASP-selected task for every truck and appends the best move that is
-in that sets of moves, iterating until each truck has a complete route. Defaults to True for all trucks.</p>
+in that sets of moves, iterating until each truck has a complete route.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -148,7 +148,7 @@ in that sets of moves, iterating until each truck has a complete route. Defaults
 <li><strong>iterations</strong> (<em>int</em>) &#8211; The number of GRASP iterations to run before picking the best solution</li>
 <li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from</li>
 <li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
-the end of their shift</li>
+the end of their shift. Defaults to all trucks needing to return to their final destination.</li>
 </ul>
 </td>
 </tr>
@@ -160,7 +160,7 @@ the end of their shift</li>
 <dt id="Algorithms.grasp_iterative">
 <code class="descclassname">Algorithms.</code><code class="descname">grasp_iterative</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>iterations=1</em>, <em>k=5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_iterative" title="Permalink to this definition">¶</a></dt>
 <dd><p>A GRASP algorithm that calculates a complete route, consisting of the selected GRASP moves, for each truck
-one-by-one. Defaults to True for all trucks.</p>
+one-by-one.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -171,7 +171,7 @@ one-by-one. Defaults to True for all trucks.</p>
 <li><strong>iterations</strong> (<em>int</em>) &#8211; The number of GRASP iterations to run before picking the best solution</li>
 <li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from</li>
 <li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
-the end of their shift</li>
+the end of their shift. Defaults to all trucks needing to return to their final destination.</li>
 </ul>
 </td>
 </tr>
@@ -183,7 +183,7 @@ the end of their shift</li>
 <dt id="Algorithms.grasp_finish">
 <code class="descclassname">Algorithms.</code><code class="descname">grasp_finish</code><span class="sig-paren">(</span><em>trucks=None</em>, <em>smap=&lt;StationMap.StationMap instance&gt;</em>, <em>iterations=1</em>, <em>k=5</em>, <em>needs_exit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.grasp_finish" title="Permalink to this definition">¶</a></dt>
 <dd><p>A GRASP algorithm that chooses the next GRASP-selected task based for the truck that finished its last task the
-earliest. Defalts to True for all trucks.</p>
+earliest.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -194,7 +194,7 @@ earliest. Defalts to True for all trucks.</p>
 <li><strong>iterations</strong> (<em>int</em>) &#8211; The number of GRASP iterations to run before picking the best solution</li>
 <li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from</li>
 <li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
-the end of their shift</li>
+the end of their shift. Defaults to all trucks needing to return to their final destination.</li>
 </ul>
 </td>
 </tr>
@@ -254,10 +254,10 @@ the truck that can complete it by the earliest time. Does nothing if this is imp
 <li><strong>smap</strong> (<a class="reference internal" href="Classes.html#StationMap.StationMap" title="StationMap.StationMap"><em>StationMap</em></a>) &#8211; The StationMap the algorithm is working on</li>
 <li><strong>task</strong> (<a class="reference internal" href="Classes.html#StationMap.Task" title="StationMap.Task"><em>Task</em></a>) &#8211; The task to be assigned to a truck</li>
 <li><strong>thresh</strong> (<em>float</em>) &#8211; The threshold value from 0 to 1. 0 means that the task will be assigned if any truck can go to the
-task&#8217;s station and move any number of bikes. 1 means the task will only be assigned if a truck can go to the station
-and move exactly the number of bikes the task originally had. Defaults to 50%.</li>
+task&#8217;s station and move any number of bikes. 1 means the task will only be assigned if a truck can go to the
+station and move exactly the number of bikes the task originally had. Defaults to 50%.</li>
 <li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
-the end of their shift. Defaults to False for all trucks.</li>
+the end of their shift. Defaults to all trucks not needing to return to their final destination.</li>
 </ul>
 </td>
 </tr>
@@ -279,8 +279,8 @@ the end of their shift. Defaults to False for all trucks.</li>
 <li><strong>seconds</strong> (<em>int</em>) &#8211; The number of seconds the GRASP will run before picking the best solution. Defaults to 10</li>
 <li><strong>k</strong> (<em>int</em>) &#8211; The length of the k list of tasks the GRASP will choose from. Defaults to 5</li>
 <li><strong>needs_exit</strong> (<em>Dict</em><em>[</em><em>bool</em><em>]</em><em></em>) &#8211; A dictionary that describes which trucks in the truck list must return to their destination by
-the end of their shift. Defaults to True for all trucks</li>
-<li><strong>start_score</strong> (<em>float</em>) &#8211; The minimum score the algorithm should find if it returns a route. Defualts to 0</li>
+the end of their shift. Defaults to all trucks needing to return to their final destination.</li>
+<li><strong>start_score</strong> (<em>float</em>) &#8211; The minimum score the algorithm should find if it returns a route. Defaults to 0</li>
 </ul>
 </td>
 </tr>
