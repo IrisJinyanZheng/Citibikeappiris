@@ -34,8 +34,8 @@
 
 #run algorithm and update database overnight, look ahead 120min, also run for 30min
 #run everyday at 23:00
-#0 23 * * * python /home/ubuntu/citibikeapp/citibikeapp/greedyalgo.py -n 120 30
+#0 23 * * * python /home/ubuntu/citibikeapp/citibikeapp/greedyalgo.py -n 120 1800
 
 #run algorithm and update database overnight, look ahead 300min, also run for 30min
 #run everyday at 00:30
-#30 0 * * * python /home/ubuntu/citibikeapp/citibikeapp/greedyalgo.py -n 300 30
+#30 0 * * * python /home/ubuntu/citibikeapp/citibikeapp/greedyalgo.py -n 300 1800
