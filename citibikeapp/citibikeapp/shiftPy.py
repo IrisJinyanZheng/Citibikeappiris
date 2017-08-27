@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-08 23:01:48
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-15 15:05:14
+# @Last Modified time: 2017-08-26 17:11:52
 
 from collections import Counter
 import csv
@@ -56,6 +56,7 @@ def updateVehicleShift(mode,vID):
     	cur.execute("""UPDATE Vehicles SET startTime = ?, LFTime = ? WHERE vID=?""",[nowTime, nowTime, vID])
     if mode == "end":
     	cur.execute("""UPDATE Vehicles SET startTime = null, endTime = null WHERE vID=?""",[vID])
+        cur.execute("""DELETE FROM Breaks where vID = ?""",[vID]) # clear default breaks when vehicle's shift ends
     con.commit()
     con.close()
     

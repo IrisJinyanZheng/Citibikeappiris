@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-09 14:17:42
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-15 16:25:20
+# @Last Modified time: 2017-08-26 22:03:29
 
 from collections import Counter
 import csv
@@ -16,6 +16,7 @@ import json
 import urllib
 import numpy as np
 import cPickle as pickle
+import argparse
 from globalfunc2 import * 
 
 from Algo.Greedy3.StationMap import Task, Station, Truck, StationMap, Break
@@ -24,9 +25,15 @@ from Algo.Greedy3 import Algorithms
 print "imported Data"
 
 
+#database address for aws
 # DATABASE = '/home/ubuntu/citibikeapp/citibikeapp/citibike_change.db'
+
+#database address for local testing
 DATABASE = 'citibike_change.db'
+
+# where the algo is, should update this in the StationMap
 # prefix_url = "/home/ubuntu/citibikeapp/citibikeapp/Algo/Greedy3/"
+
 
 def create_smap():
     '''Return a stationmap object
@@ -37,7 +44,10 @@ def create_smap():
     return smap
 
 def create_fbs(con,smap):
-    """create forbidden stations"""
+    """create forbidden stations
+    con is sqlite3 connection
+    smap is the StationMap object
+    return a dictionary with Station Object -> a tuple of datetime objects"""
     forbidden_stations = {}
     nowTime = getNYtimenow()
     sql = """SELECT * FROM ForbiddenStationsTemp where startD <= " """+ nowTime + """ "  and endD >= " """+ nowTime + """ " """
@@ -64,22 +74,47 @@ def create_fbs(con,smap):
 
 
 def parse_breaks(con):
-    """Parse and return a dictionary from vehicle id to list of breaks"""
+    """Parse and return a dictionary with vehicle id(int) -> list of Break object"""
+
+    # create a dictionary from vehicle ID to how many breaks one of the two drivers
+    # on the vehicle has had. 
+    vb_dic = {}
+    sql = """SELECT * FROM DriversShift """
+    df = pd.read_sql(sql, con)
+    for index, row in df.iterrows():
+        lunchCount = int(row["lunchCount"])
+        breakCount = int(row["breakCount"])
+        if (not row["vID"] is None) and (row["vID"]==row["vID"]): #vID is not None or NaN
+            vb_dic[int(row["vID"])] = [lunchCount,breakCount]
+
     break_dic = {}
-    breaks = []
+    # breaks = []
     sql = """SELECT * FROM Breaks """
     df = pd.read_sql(sql, con)
     for index, row in df.iterrows():
+        vID = int(row["vID"])
+        breaks_count = vb_dic.get(vID,[0,0])
+
         break_duration = 15 #default 15min break
         if int(row["tType"]) == 16:
-            break_duration = 30 #lunch break for 30
+            if breaks_count[0] == 0:
+                break_duration = 30 #lunch break for 30
+            else:
+                breaks_count[0] -= 1
+                vb_dic[vID] = breaks_count
+                continue
+        else:
+            if breaks_count[1] != 0:
+                breaks_count[1] -= 1
+                vb_dic[vID] = breaks_count
+                continue
         # if int(row["tType"]) == 17 or int(row["tType"]) == 18:
         #   break_duration = 15
-        break_time = timeStringToObject(str(row["publishTime"]))
-        breaks.append(Break(break_time,break_duration))
-        break_time = break_time + timedelta(days=1) #account for crossing day 
-        breaks.append(Break(break_time,break_duration))
-        break_dic[int(row["vID"])] = breaks
+        break_time = datetimeStringToObject(str(row["publishDateTime"]))
+        break_dic[vID] = break_dic.get(vID, []) + [Break(break_time,break_duration)]
+        # break_time = break_time + timedelta(days=1) #the same break on next day, account for crossing day breaks
+        # breaks.append(Break(break_time,break_duration))
+        # break_dic[int(row["vID"])] = breaks
     return break_dic
 
 # def estimate_day_shift(con):
@@ -87,6 +122,7 @@ def parse_breaks(con):
 #   result = con.execute(sql).fetchall()[0][0]
 
 def create_shift_ends(con):
+    """Return a dictionary with vehicle ID (int) -> datetime object"""
     shift_end = {}
     sql = """SELECT * FROM Vehicles """
     df = pd.read_sql(sql, con)
@@ -96,7 +132,8 @@ def create_shift_ends(con):
     return shift_end
 
 def create_vehicle_dic(con,smap):
-    #create a vehicle dictionary without driverless vehicle
+    """create a vehicle dictionary without driverless vehicle. 
+    Return a dictionary with vehicle ID (int) -> Truck object"""
     break_dic = parse_breaks(con)
     trucks = {}
     sql = """SELECT * FROM Vehicles Where vID != -111 """ 
@@ -104,13 +141,13 @@ def create_vehicle_dic(con,smap):
     for index, row in df.iterrows():
         start_string = str(row["startTime"])
         if str(start_string).lower() != "null" and str(start_string) != "" and str(start_string).lower() != "none": #only pass in signed-in vehicles
-            start_time = timeStringToObject(str(row["LFTime"])) # Create datetime obj at truck sign in time for beginning of truck's shift
+            start_time = datetimeStringToObject(str(row["LFTime"])) # Create datetime obj at truck last task finish time for beginning of truck's shift
             # start_time = datetime.today().replace(second=0, microsecond=0)  # Create datetime obj at current time for beginning of truck's shift
             if start_time is None:
                 start_time = datetime.now()
             finish_time = timeStringToObject(str(row["endTime"])) # Create datetime obj at estimate truck sign out time for end of truck's shift
             if finish_time is None:
-                finish_time = start_time + timedelta(hours=6) # if end time is null
+                finish_time = start_time + timedelta(hours=6) # if end time is null, schedule for next 6 hours
             elif finish_time < start_time:
                 finish_time = finish_time + timedelta(days=1)# account for crossing days
             #finish_time = start_time + timedelta(hours=6)  # Create datetime obj 6 hours from now for end of truck's shift
@@ -409,6 +446,13 @@ def greedyalgo(con):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    help_str = "first argument is how long in real time minutes does the algorithm predicts;" + "second argument is how many minutes does the algorithm itself runs"
+    parser.add_argument("-n","--night", help=help_str, nargs='+', type=int, default=(120,1))
+    args = parser.parse_args()
+    look_ahead=int(args.night[0])
+    runtime=int(args.night[1]) 
+
     con = sqlite3.connect(DATABASE)
     greedyalgo(con)
     # test(con)

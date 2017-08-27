@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 23:28:02
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-23 08:59:13
+# @Last Modified time: 2017-08-26 17:09:00
 
 from collections import Counter
 import csv
@@ -75,9 +75,12 @@ def updateDefaultBreaks():
     try:
         startTime = vInfo[0][0]
         startTime = datetimeStringToObject(startTime)
-        lunchBreak = str(startTime+timedelta(minutes=float(lunchBreak)*60))[11:19]
-        shortBreak1 = str(startTime+timedelta(minutes=float(shortBreak1)*60))[11:19]
-        shortBreak2 = str(startTime+timedelta(minutes=float(shortBreak2)*60))[11:19]
+        lunchBreak_comp = str(startTime+timedelta(minutes=float(lunchBreak)*60))[:19]
+        shortBreak1_comp = str(startTime+timedelta(minutes=float(shortBreak1)*60))[:19]
+        shortBreak2_comp = str(startTime+timedelta(minutes=float(shortBreak2)*60))[:19]
+        lunchBreak = lunchBreak_comp[11:19]
+        shortBreak1 = shortBreak1_comp[11:19]
+        shortBreak2 = shortBreak2_comp[11:19]
     except:
         # either fail because startTime is empty or None
         return "can't assign breaks to not in shift vehicle"
@@ -90,11 +93,11 @@ def updateDefaultBreaks():
 
     for tType in breaks:
     	if int(tType) == 16: 
-    		cur.execute("""INSERT INTO Breaks (vID, tType, publishTime) values (?,?,?);""",[vID,tType,lunchBreak])
+    		cur.execute("""INSERT INTO Breaks (vID, tType, publishTime, publishDateTime) values (?,?,?,?);""",[vID,tType,lunchBreak,lunchBreak_comp])
     	if int(tType) == 17: 
-    		cur.execute("""INSERT INTO Breaks (vID, tType, publishTime) values (?,?,?);""",[vID,tType,shortBreak1])
+    		cur.execute("""INSERT INTO Breaks (vID, tType, publishTime, publishDateTime) values (?,?,?,?);""",[vID,tType,shortBreak1,shortBreak1_comp])
     	if int(tType) == 18: 
-    		cur.execute("""INSERT INTO Breaks (vID, tType, publishTime) values (?,?,?);""",[vID,tType,shortBreak2])
+    		cur.execute("""INSERT INTO Breaks (vID, tType, publishTime, publishDateTime) values (?,?,?,?);""",[vID,tType,shortBreak2,shortBreak2_comp])
 
     con.commit()
     con.close()
