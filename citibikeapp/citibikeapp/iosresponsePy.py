@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 11:36:42
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-14 09:45:47
+# @Last Modified time: 2017-08-27 20:48:50
 
 
 from collections import Counter
@@ -29,6 +29,7 @@ from citibikeapp import app
 ############################ iOS APP Response Vehicle Info ############################################################################################
 @app.route("/getVehicles.json")
 def getVehicles():
+    """Return Vehicles table in json form"""
     con = connect_to_database()
     sql = """SELECT * FROM Vehicles"""
     df = pd.read_sql(sql, con)
@@ -39,7 +40,8 @@ def getVehicles():
 
 @app.route("/vID/<vID>")
 def getVehicleID(vID):
-    """Used by the iOS app to display updated vehicle information"""
+    """Return the vehicle's info in string
+    Used by the iOS app to display updated vehicle information"""
     vInfo = execute_query("""SELECT vName, dID1, dID2, capacity, vBike, vBikeBroken FROM Vehicles Where vID = ?
          """,
          [vID])
@@ -75,19 +77,19 @@ def updateVehicleInfo():
     con = connect_to_database()
     cur = con.cursor()
     
-    if True:
-        print "updating"
-        cur.execute("""UPDATE Vehicles SET dID1 = ?, dID2 = ?, vBike = ?, vACLatitude = ?, vACLongitude = ?, vBikeBroken = ?  WHERE vID=?""",[dID1, dID2, vBike,vACLatitude, vACLongitude, vBikeBroken, vID])
-        result = "Updated Vehicle #" + vID
+
+    print "updating"
+    cur.execute("""UPDATE Vehicles SET dID1 = ?, dID2 = ?, vBike = ?, vACLatitude = ?, vACLongitude = ?, vBikeBroken = ?  WHERE vID=?""",[dID1, dID2, vBike,vACLatitude, vACLongitude, vBikeBroken, vID])
+    result = "Updated Vehicle #" + vID
 
     con.commit()
     con.close()
 
     print "updating finished"
-    if True:
-        rows = execute_query("""SELECT * FROM Vehicles WHERE vID = ? AND dID1 = ? AND dID2 = ?""", [vID, dID1, dID2])
 
-    if len(rows) == 0:
+    rows = execute_query("""SELECT * FROM Vehicles WHERE vID = ? AND dID1 = ? AND dID2 = ?""", [vID, dID1, dID2])
+
+    if len(rows) == 0: #if the vehicle to update does not exist
         rows2 = execute_query("""SELECT * FROM Vehicles WHERE vID = ? """, [vID])
         result = "Oops, there is a problem"
         if len(rows2) == 0:
@@ -100,6 +102,7 @@ def updateVehicleInfo():
 ############################ iOS APP Response Task ############################################################################################
 @app.route('/reasonCode.json')
 def reasonCodeJson():
+    """Return table ReasonCode in json form"""
     con = connect_to_database()
     sql = """SELECT * FROM ReasonCode"""
     df = pd.read_sql(sql, con)
@@ -143,6 +146,7 @@ def getStations():
 
 @app.route('/stationid/<id>')
 def get_id(id):
+    """Return the station with the specific id in string """
     rows = execute_query(
         """SELECT * FROM Stations 
         WHERE sID= ?
@@ -153,7 +157,8 @@ def get_id(id):
 
 @app.route('/response')#, methods=['GET']
 def response():
-    """Respond to a query of the format:
+    """Accept or request to reject a task, update location
+    Respond to a query of the format:
     myapp/response?tid=600&res=1&reason=qwe
     http://ec2-54-196-202-203.compute-1.amazonaws.com/response?tid=54&res=1&reason=accepted&lati=40.720498&longi=-73.907929&vID=13&nxs=127&nxlati=40.72&nxlongi=-73.97"""
     result = "there is a problem"
@@ -182,6 +187,7 @@ def response():
     con = connect_to_database()
     cur = con.cursor()
 
+    # update current location on map
     cur.execute("""UPDATE Vehicles SET vACLatitude = ?, vACLongitude = ? WHERE vID=?""",[vACLatitude,vACLongitude,vID])
     
     if res == '1':
@@ -190,8 +196,10 @@ def response():
         vNXLatitude = request.args.get('nxlati')
         vNXLongitude = request.args.get('nxlongi')
 
+        # update next task ID and destination on map
         cur.execute("""UPDATE Vehicles SET tID = ?, vNXLatitude = ?, vNXLongitude = ?, vNXsID = ? WHERE vID=?""",[tID, vNXLatitude,vNXLongitude,vNXsID,vID])
-        cur.execute("""UPDATE OpenTasks SET acceptTime = ?, fixTask = 1 WHERE tID=?""",[nowTime,tID])
+        # update accept time and fix the task
+        cur.execute("""UPDATE OpenTasks SET acceptTime = ?, fixTask = 1 WHERE tID=?""",[nowTime,tID]) 
         result = "Accepted Task #" + tID
 
     if res == '0':
@@ -200,6 +208,7 @@ def response():
 
         reasonID = request.args.get('reasonID')
 
+        #request rejecting
         cur.execute("""UPDATE OpenTasks SET rejTime = ?, comment = ?, reasonID = ? WHERE tID = ?""",[nowTime,reason,reasonID,tID]) 
 
         # the following commented actions requires permission of dispatcher 
@@ -221,6 +230,8 @@ def response():
     con.close()
 
     print "response finished"
+
+    # check if operation success
     if res == '1':
         rows = execute_query("""SELECT * FROM OpenTasks WHERE tID = ?""", [tID])
     if res == '0':
@@ -233,7 +244,8 @@ def response():
 
 @app.route('/complete', methods=['GET'])
 def complete():
-    """Respond to a query of the format:
+    """Complete or partial complete a task, finish break, update location
+    Respond to a query of the format:
     myapp/complete?tid=600&lati=40.72&longi=-73.97&vID=11&vBike=10&vBikeBroken=0&res=0&actBikeNum=9&reason=comment"""
     result = "there is a problem"
     print "completing"
@@ -251,6 +263,7 @@ def complete():
         print "Please enter vehicle info"
         return "Please enter vehicle info"
 
+    # get current task info
     task = execute_query(
         """SELECT orderNum, tType, sID FROM OpenTasks where tID = ?
         """, [tID])
@@ -258,12 +271,19 @@ def complete():
     tType = task[0][1]
     sID = task[0][2]
 
+    # get vehicle info
     vInfo = execute_query("""SELECT vName, dID1, dID2 FROM Vehicles Where vID = ?
          """,
          [vID])
 
     dID1 = vInfo[0][1]
     dID2 = vInfo[0][2]
+
+    #get next task info
+    nextvInfo = execute_query("""SELECT tID, tType FROM OpenTasks Where vID = ? and orderNum = ?
+         """,
+         [vID, int(preOrder)+1])
+
     print "got attributes"
 
     tz = pytz.timezone('America/New_York')
@@ -272,6 +292,7 @@ def complete():
     con = connect_to_database()
     cur = con.cursor()
 
+    # updat vehicle info
     cur.execute("""UPDATE Vehicles SET vBike = ?, vACLatitude = ?, vACLongitude = ?, vBikeBroken = ?, LFTime = ?, vACsID = ? WHERE vID=?""",[vBike, vACLatitude,vACLongitude, vBikeBroken, nowTime,sID,vID])
 
     #increment break count 
@@ -280,6 +301,7 @@ def complete():
     if tType == 17 or tType == 18:
         cur.execute("""UPDATE DriversShift SET breakCount = breakCount+1 WHERE dID=? or dID = ?""",[dID1, dID2])
 
+    #update Opentasks/ ClosedTasks tables
     cur.execute("""INSERT INTO ClosedTasks (tID, requirement, acceptTime, priority, vID, dID1, dID2, tType, sID,bikeNum, completionTime, comment, publishTime, estComplete, arrivalTime, rejTime, reasonID) 
             SELECT tID, requirement, acceptTime, priority, 
             vID, dID1, dID2, tType, sID, bikeNum, completionTime, comment, publishTime, estComplete,arrivalTime, rejTime, reasonID FROM OpenTasks where tID=?
@@ -288,6 +310,21 @@ def complete():
     cur.execute("""Delete from OpenTasks where tID = ?""",[tID])
     cur.execute("""UPDATE OpenTasks SET orderNum = orderNum - 1 WHERE vID = ? and orderNum > ?""",[vID, preOrder]) 
     cur.execute("""UPDATE ClosedTasks SET status = ?, closeTime=?, comment=?, actBikeNum = ? WHERE tID=?""",[res, nowTime, comment, actBikeNum, tID])
+    
+    # update break dealine if next task is a break
+    if len(nextvInfo) != 0:
+        #if there is a next task
+        nexttID = nextvInfo[0][0]
+        nexttType = nextvInfo[0][1]
+        if int(nexttType) == 16:
+            # if next task is a lunch break, update break deadline to 30 minutes after this task is completed
+            completionTime = str(datetime.now(tz) + timedelta(minutes=30))[:19]
+            cur.execute("""UPDATE OpenTasks SET completionTime = ? WHERE tID = ?""",[completionTime, nexttID]) 
+        elif int(nexttType) in [17,18]:
+            # if next task is a lunch break, update break deadline to 15 minutes after this task is completed
+            completionTime = str(datetime.now(tz) + timedelta(minutes=15))[:19]
+            cur.execute("""UPDATE OpenTasks SET completionTime = ? WHERE tID = ?""",[completionTime, nexttID]) 
+
     result = "Completed Task #" + tID
 
     con.commit()
@@ -304,7 +341,8 @@ def complete():
 
 @app.route('/arrive', methods=['GET'])
 def arrive():
-    """Respond to a query of the format:
+    """Signal the driver's arriving at task station
+    Respond to a query of the format:
     myapp/arrive?tid=600&lati=40.72&longi=-73.97&vID=11&reason=comment"""
     result = "there is a problem"
     print "arriving"
