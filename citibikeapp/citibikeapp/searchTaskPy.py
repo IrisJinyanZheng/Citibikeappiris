@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 12:00:16
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-04 12:00:35
+# @Last Modified time: 2017-08-27 21:43:36
 
 
 
@@ -28,12 +28,14 @@ from citibikeapp import app
 
 ############################ Search Tasks ############################################################################################
 def checkVariable(a):
+    """Return % if a is an empty string, otherwise return a"""
     a = '%' if a == "" else a
     return a
 
 @app.route('/searchTask', methods=['GET', 'POST'])
 @login_required
 def searchTask():
+    """Return the html page for searching task"""
     tasks = execute_query(
         """SELECT * FROM Tasks
         """)
@@ -42,6 +44,8 @@ def searchTask():
 @app.route('/searchTaskResult', methods=['GET', 'POST'])
 @login_required
 def searchTaskResult():
+    """Return the result of seaching tasks in tables"""
+    # if not filled out, use %
     try:
         vID = request.form['vID']
     except Exception as e:
@@ -87,6 +91,8 @@ def searchTaskResult():
     priority = checkVariable(priority)
 
     con = connect_to_database()
+
+    #  query from database
 
     sql = """SELECT * from OpenTasks where vID like ? and (DATETIME(publishTime) BETWEEN ? AND ?) and tType like ? and sID like ? and bikeNum like ? and priority like ? Order By vID"""
     df = pd.read_sql(sql, con, params=[vID,fromPublishTime,toPublishTime,tType, sID, bikeNum, priority])
