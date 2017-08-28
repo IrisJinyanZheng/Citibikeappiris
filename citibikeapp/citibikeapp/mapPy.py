@@ -2,7 +2,7 @@
 # @Author: sy
 # @Date:   2017-08-04 11:54:30
 # @Last Modified by:   sy
-# @Last Modified time: 2017-08-04 11:54:52
+# @Last Modified time: 2017-08-27 21:33:00
 
 
 from collections import Counter
@@ -29,6 +29,7 @@ from citibikeapp import app
 @app.route('/stationgeojson')
 @login_required
 def stationgeojson():
+    """Return the geojson of all stations except the Jersey stations in file map/JerseyStations.txt"""
     url = 'http://feeds.citibikenyc.com/stations/stations.json'
     response = urllib.urlopen(url)
     data = json.loads(response.read())
@@ -52,7 +53,7 @@ def stationgeojson():
 @app.route('/vehiclegeojson')
 @login_required
 def vehiclegeojson():
-    """Jsonify vehicles"""
+    """Return the geojson of where all vehicles are"""
     con = connect_to_database()
     sql = """SELECT * FROM Vehicles"""
     df = pd.read_sql(sql, con)
@@ -71,7 +72,7 @@ def vehiclegeojson():
 @app.route('/taskgeojson')
 @login_required
 def taskgeojson():
-    """Jsonify vehicles"""
+    """Return the geojson of the tasks(from vehicle current location to next task station)"""
     con = connect_to_database()
     sql = """SELECT * FROM Vehicles"""
     df = pd.read_sql(sql, con)
