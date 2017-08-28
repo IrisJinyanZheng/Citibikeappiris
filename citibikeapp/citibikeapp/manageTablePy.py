@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: sy
 # @Date:   2017-08-04 11:49:45
-# @Last Modified by:   sy
-# @Last Modified time: 2017-08-15 14:59:51
+# @Last Modified by:   yushangdi
+# @Last Modified time: 2017-08-27 21:30:02
 
 
 from collections import Counter
@@ -30,7 +30,9 @@ from citibikeapp import app
 @app.route('/manageTabelJson/<table>.json')
 @login_required
 def manageTabelJson(table):
+    """Return the json of the table"""
     if table == "Users":
+        # can't access username/password
         print "trying to access table User in /manageTableJson"
         abort(404)
     con = connect_to_database()
@@ -70,6 +72,7 @@ def manageTabelJson(table):
 @app.route('/deleteEntryById/<table>/<ID>')
 @login_required
 def deleteEntryById(table, ID):
+    """Delete the entry in table <table> with ID <ID>"""
     time = getNYtimenow()
     vID = -12222 #this id should not exist to prevent bug
     preOrder = 0
@@ -100,13 +103,18 @@ def deleteEntryById(table, ID):
         endD = str(datetime.now(tz) + timedelta(minutes=duration))[:19]
         endTime = endD[11:]
 
+        #archive the deleted task
         cur.execute("""INSERT INTO DeletedTasks (tID, publishTime, acceptTime, vID, dID1, dID2, requirement, completionTime, priority, tType, sID,bikeNum, comment, publishTime, estComplete, arrivalTime, rejTime, reasonID) 
             SELECT  tID, publishTime, acceptTime, vID, dID1, dID2, requirement, completionTime, priority, tType, sID,bikeNum, comment, publishTime, estComplete, arrivalTime, rejTime, reasonID FROM OpenTasks where tID=?
          """,
          [ID])
         cur.execute("""UPDATE DeletedTasks SET deleteTime=? WHERE tID=?""",[time, ID])
+
+        #delete the entry and fix order
         cur.execute("""DELETE from OpenTasks where tID = ?""",[ID])
         cur.execute("""UPDATE OpenTasks SET orderNum = orderNum - 1 WHERE vID = ? and orderNum > ?""",[vID, preOrder]) 
+
+        # forbid the station
         cur.execute("""INSERT INTO ForbiddenStationsTemp(sID, sComment,startTime,endTime,publishTime,startD,endD) VALUES(?,'deleted',?,?,?,?,?)""",[sID,startTime,endTime,publishTime,startD,endD])
 
         col = "tID"
@@ -163,18 +171,21 @@ def deleteEntryById(table, ID):
 @app.route('/manageTable/<table>+<col>')
 @login_required
 def manageTable(table,col):
+    """ return the page for manageing table <table>"""
     shouldUpdate = "True"
     if table == "ClosedTasks":
-        shouldUpdate = "False"
+        shouldUpdate = "False" # can't update/delete closed tasks, can only reassign
     if table == "ForbiddenStations" or table == "ForbiddenStationsTemp":
-        shouldUpdate = "NoUpdate"
+        shouldUpdate = "NoUpdate" # can't update forbidden stations
     if table == "DriversShift":
+        # special html templates for driversShift table
         return render_template("table_driversshift_manage.html")
     return render_template("manage_table.html", table_name = table, id_col = col, shouldUpdate = shouldUpdate )
 
 @app.route('/manageTask')
 @login_required
 def manageTask():
+    """ return the page for manageing OpenTasks table"""
     con = connect_to_database()
     sql = """SELECT Vehicles.vID, Vehicles.vName, Vehicles.dID1,  d1.dName as dName1, Vehicles.dID2,  d2.dName as dName2, Vehicles.capacity, Vehicles.vBike, Vehicles.tID, 
             ds1.signInTime as signInTime1, ds1.signOutReqTime as signOutReqTime1, ds1.lunchCount as lunchCount1, ds1.breakCount as breakCount1,
@@ -193,6 +204,7 @@ def manageTask():
 @app.route('/currentOpenTask')
 @login_required
 def currentOpenTask():
+    """Return the current opentasks with order 1 in a table"""
     con = connect_to_database()
     sql = """SELECT ot.tID, ot.vID,Vehicles.vName,Tasks.tName, Stations.stationName, ot.bikeNum, PriorityCode.pName as priorityN, ReasonCode.reasonName, ot.comment, ot.acceptTime, ot.arrivalTime, ot.completionTime, ot.publishTime, ot.tType, ot.sID, ot.requirement,  ot.estComplete, ot.orderNum, ot.reasonID, ot.priority
             FROM OpenTasks AS ot
@@ -213,6 +225,7 @@ def currentOpenTask():
 @app.route('/violatingDeadlineOpenTask')
 @login_required
 def violatingDeadlineOpenTask():
+    """Return the current deadline violating opentasks in a table"""
     nowTime = getNYtimenow()
     con = connect_to_database()
     sql = """SELECT ot.tID, ot.vID,Vehicles.vName,Tasks.tName, Stations.stationName, ot.bikeNum, PriorityCode.pName as priorityN, ReasonCode.reasonName, ot.comment, ot.acceptTime, ot.arrivalTime, ot.completionTime, ot.publishTime, ot.tType, ot.sID, ot.requirement,  ot.estComplete, ot.orderNum, ot.reasonID, ot.priority
@@ -231,10 +244,11 @@ def violatingDeadlineOpenTask():
     return render_template("table.html",table = tablehtml, name = "Violating Deadline Tasks", title = "Violating Deadline Tasks")
 
 ############################ Update By Id ############################################################################################
-#should not use the following for opentasks
+#should not use the following for opentasks, opentasks have its special update functions
 @app.route('/searchByCol/<table>/<col>=<id>.json')
 @login_required
 def searchByCol(table,col,id):
+    """Return the json of entry with id <id> in table <table>"""
     if table == "Users":
         abort(404)
     con = connect_to_database()
@@ -248,6 +262,7 @@ def searchByCol(table,col,id):
 @app.route('/updateByIdForm/<table>/<col>=<id>')
 @login_required
 def updateByIdForm(table, col, id):
+    """Return the html page for updating entry with id <id> in table <table>"""
     if table == "Users":
         abort(404)
     if table == "Drivers":
@@ -264,17 +279,21 @@ def updateByIdForm(table, col, id):
 @app.route('/updateByIdSumbit/<table>/<col>=<id>', methods=['GET', 'POST'])
 @login_required
 def updateById(table,col, id):
+    """Update the entry with id <id> in table <table>"""
     if table == "Users":
         abort(404)
-    # time = getNYtimenow()
+
+    # get the name of the columns
     columnList = execute_query("""PRAGMA table_info(""" + table + """)""")
     commandString = ""
 
     con = connect_to_database()
     cur = con.cursor()
 
+    # generate the sql command for updating the entry
     for c in columnList:
         value = str(request.form[str(c[1])])
+        # if the value is not null, add '' around the value
         if value.lower() != "null":
             value = "'" + str(request.form[str(c[1])]) + "'"
         commandString += c[1] + " = " + value + ","
@@ -296,6 +315,7 @@ def updateById(table,col, id):
 @app.route('/successUpdateById/<table>/<col>=<id>', methods=['GET', 'POST'])
 @login_required
 def successUpdateById(table,col, id):
+    """Return the html page for successfully updating the entry"""
     print "updating by id success"
     con = connect_to_database()
     sql = """SELECT * FROM """ + table + """ WHERE """ + col +" = '"+ id + "'"
@@ -338,7 +358,7 @@ def confirmRejectTask(tID):
     cur = con.cursor()
 
 
-
+    # archive the task in ClosedTasks
     cur.execute("""INSERT INTO ClosedTasks (tID, requirement, acceptTime, priority, vID, dID1, dID2, tType, sID,bikeNum, completionTime, comment, publishTime, estComplete, arrivalTime, rejTime, reasonID) 
         SELECT tID, requirement, acceptTime, priority, 
         vID, dID1, dID2, tType, sID, bikeNum, completionTime, comment, publishTime, estComplete, arrivalTime,rejTime, reasonID FROM OpenTasks where tID=?
@@ -389,6 +409,7 @@ def disproveRejectTask(tID):
 @app.route('/updateOpenTasksForm/<id>', methods=['GET', 'POST'])
 @login_required
 def updateOpenTasksForm(id):
+    """Return the html form for updating the OpenTask with id <id>"""
     print "accessing updateOpenTasksForm"
     tasks = execute_query(
         """SELECT * FROM Tasks
@@ -425,6 +446,7 @@ def updateOpenTasksForm(id):
 @app.route('/updateOpenTasksSumbit/tID=<tID>', methods=['GET', 'POST'])
 @login_required
 def updateOpenTasks(tID):
+    """Gather info from the submitted form and update the opentask"""
     print "update open task form submitted"
 
     vID = request.form['vID']
@@ -512,6 +534,7 @@ def updateOpenTasks(tID):
 @app.route('/reOrder/tID=<tID>&vID=<vID>&preOrder=<preOrder>/', methods=['GET', 'POST'])
 @login_required
 def reOrder(tID,vID,preOrder):
+    """Move the opentask with id <tID> from <preOrder> position to the position right before the current task with order <orderNum>"""
     print "start reordering"
     orderNum = request.form["orderNum"]
 
@@ -534,6 +557,7 @@ def reOrder(tID,vID,preOrder):
 
 @app.route('/fixTask/tID=<tID>&vID=<vID>&preOrder=<preOrder>')
 def fixTask(tID,vID,preOrder):
+    """Make an opentask in fixed task"""
     print "start fixing task"
     orderNum = getNextFixOrderNum(vID)
     print "got all attributes"
@@ -543,12 +567,9 @@ def fixTask(tID,vID,preOrder):
 
     resetEstComp(cur, vID)
 
-    if (int(preOrder) > int(orderNum)):
-        cur.execute("""UPDATE OpenTasks SET orderNum = orderNum + 1 WHERE vID = ? and orderNum >= ? and orderNum < ?""",[vID, orderNum, preOrder])
-        cur.execute("""UPDATE OpenTasks SET orderNum = ?, fixTask = 1 Where tID = ?""", [orderNum, tID])
-    # if (int(preOrder) < int(orderNum)):
-    #     cur.execute("""UPDATE OpenTasks SET orderNum = orderNum - 1 WHERE vID = ? and orderNum > ? and orderNum < ?""",[vID, preOrder,orderNum])
-    #     cur.execute("""UPDATE OpenTasks SET orderNum = ? Where tID = ?""", [int(orderNum)-1, tID])
+    # change order number
+    cur.execute("""UPDATE OpenTasks SET orderNum = orderNum + 1 WHERE vID = ? and orderNum >= ? and orderNum < ?""",[vID, orderNum, preOrder])
+    cur.execute("""UPDATE OpenTasks SET orderNum = ?, fixTask = 1 Where tID = ?""", [orderNum, tID])
 
     con.commit()
     con.close()
@@ -560,6 +581,7 @@ def fixTask(tID,vID,preOrder):
 @app.route('/reassignByIdForm/<table>/<col>=<id>', methods=['GET', 'POST'])
 @login_required
 def reassignByIdForm(table, col, id):
+    """Return the html page of reassigning a closed task"""
     print "accessing re-assign task form"
     tasks = execute_query(
         """SELECT * FROM Tasks
