@@ -17,7 +17,10 @@ class FetchShiftsAPI{
     
     let link = "http://ec2-54-196-202-203.compute-1.amazonaws.com/getShifts.json"
     
-    
+    /** Called in ShiftViewController.
+        transform link:getShifts.json into a more efficient data structure called shift_dic.
+      In the original json, searching driverID requires going through the entire list of dicts. Now, a simple access shift_dic[driverID] returns the dictionary that stores info associated with this driverID.
+     **/
     func fetchShifts(completion:@escaping (Dictionary<String, Dictionary<String, Any>>) -> ()){
         
         guard let url = URL(string: link) else{return }
@@ -42,7 +45,10 @@ class FetchShiftsAPI{
         task.resume()
         
     }
-    
+    /** Helper method called in fetchShifts.
+     transformed type raw Data into a Dictionary<String,Any> object,
+     which is further parsed in method getShiftsFromJSON to produce the desired data structure
+     **/
     func getListFromData(data: Data) -> [Dictionary<String,Any>]? {
         
         if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) {
@@ -55,7 +61,9 @@ class FetchShiftsAPI{
         return nil
     }
     
-    
+    /** Helper method called in fetchShifts.
+        transformed the original json format -- an array of dictionaries into dictionary where the key is driverID and the value a is dict. The dict stores data associated with driverID
+     **/
     func getShiftsFromJSON(json: [Dictionary<String,Any>]) -> Dictionary<String, Dictionary<String, Any>>{
         var shift_dic = Dictionary<String, Dictionary<String, Any>>()
         

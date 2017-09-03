@@ -11,20 +11,28 @@ import UIKit
 var commonaddress = "http://ec2-54-196-202-203.compute-1.amazonaws.com"
 
 class ShiftViewController: UIViewController {
-
+    
     @IBOutlet weak var notSignInLabel: UILabel!
     
     @IBOutlet weak var vehicle1Label: UILabel!
     @IBOutlet weak var vehicleLabel: UILabel!
+    /** pressed when the vehicle info is updated **/
     @IBOutlet weak var vehicleStartButton: UIButton!
+    /** displays the start time of label **/
     @IBOutlet weak var vehicleStartLabel: UILabel!
+    /** pressed when the both drivers have ended shift **/
     @IBOutlet weak var vehicleEndButton: UIButton!
     
     @IBOutlet weak var driver1Label: UILabel!
+    /** pressed when driver1 starts shift **/
     @IBOutlet weak var driver1StartButton: UIButton!
+    /** pressed when driver1 ends shift **/
     @IBOutlet weak var driver1EndButton: UIButton!
+    /** shows the start time of driver1**/
     @IBOutlet weak var driver1StartLabel: UILabel!
+    /** shows the end time of driver1**/
     @IBOutlet weak var driver1EndLabel: UILabel!
+    /** displays "waiting" if vehicle info hasn't been updated **/
     @IBOutlet weak var driver1PendingLabel: UILabel!
     
     @IBOutlet weak var driver2Label: UILabel!
@@ -33,10 +41,17 @@ class ShiftViewController: UIViewController {
     @IBOutlet weak var driver2StartLabel: UILabel!
     @IBOutlet weak var driver2EndLabel: UILabel!
     @IBOutlet weak var driver2PendingLabel: UILabel!
-    
+    /** set the view to default and refresh vehicle & shift data **/
     @IBOutlet weak var refreshButton: UIButton!
     
+    /** shift_dic is a more efficient data structure than the original json.
+     e.g. If driverID = 250, then shift_dic[250] returns the information associated with this driverID, which is of type Dic<String,Any>
+     **/
     var shift_dic = Dictionary<String,Dictionary<String,Any>>()
+    
+    /** vehicle_dic is a more efficient data structure than the original json.
+     e.g. If viehcleID = 250, then vehicle_dic[250] returns the information associated with this viehcleID, which is of type Dic<String,Any>
+     **/
     var vehicle_dic = Dictionary<Int,Dictionary<String,Any>>()
     
     override func viewDidLoad() {
@@ -65,7 +80,7 @@ class ShiftViewController: UIViewController {
         }
         // Do any additional setup after loading the view.
     }
-    
+    /** set the view to default and refresh vehicle & shift data **/
     func refreshButtonPressed(){
         driver1PendingLabel.isHidden = true
         driver1PendingLabel.text = "waiting..."
@@ -75,7 +90,7 @@ class ShiftViewController: UIViewController {
         fetchShifts()
         setupViews()
     }
-    
+    /*set the view to default, then update the view according to vehicle & shift data */
     func setupViews(){
     
         notSignInLabel.isHidden = true
@@ -92,7 +107,7 @@ class ShiftViewController: UIViewController {
         
     }
     
-    
+    /** add handler methods to UIbuttons **/
     func setupButtonTargets(){
         vehicleStartButton.addTarget(self, action: #selector(vehicleStartButtonPressed), for: .touchUpInside)
         vehicleEndButton.addTarget(self, action: #selector(vehicleEndButtonPressed), for: .touchUpInside)
@@ -102,12 +117,12 @@ class ShiftViewController: UIViewController {
         driver2EndButton.addTarget(self, action: #selector(driver2EndButtonPressed), for: .touchUpInside)
 
     }
-    
+    /** called when vehicle info is updated **/
     func vehicleStartButtonPressed(){
         vehicleShiftButtonPressed(vID: vID, mode: "start")
         vehicleStartButton.isEnabled = false
     }
-    
+    /** called when both drivers have ended their shifts **/
     func vehicleEndButtonPressed(){
         vehicleShiftButtonPressed(vID: vID, mode: "end")
         vehicleEndButton.isEnabled = false
@@ -138,7 +153,7 @@ class ShiftViewController: UIViewController {
         driver2PendingLabel.isHidden = false
         driver2EndButton.isEnabled = false
     }
-    
+    /** update the label that displays info on shift start time **/
     func vehicleShiftButtonPressed(vID: Int, mode: String){
         var contents = ""
         let link = commonaddress + "/updateVehicleShift/mode=\(mode)&vID=\(vID)"
@@ -153,7 +168,8 @@ class ShiftViewController: UIViewController {
         }
         vehicleStartLabel.text = contents
     }
-    
+    /** when driver pressed the shift button, update the UI on start time, end time, is waiting etc
+     **/
     func driverShiftButtonPressed(dID:String, mode:String) -> String{
 
         var contents = ""
@@ -171,7 +187,9 @@ class ShiftViewController: UIViewController {
     }
 
     
-    
+    /** Update vehicle start time, driver start time and driver end time.
+        Show estimate if he hasn't signed in or signed out.
+     **/
     func setupTimeStrings(){
         let shift1 = shift_dic[dID1]
         let shift2 = shift_dic[dID2]
@@ -247,7 +265,9 @@ class ShiftViewController: UIViewController {
             }
         }
     }
-    
+    /** update self.shift_dic, where shift_dic[driverID] returns the information associated with this driverID.
+        Call setupTimeStrings to display info on time.
+     **/
     func fetchShifts(){
         var api = FetchShiftsAPI()
         api.fetchShifts(){
@@ -259,7 +279,9 @@ class ShiftViewController: UIViewController {
         }
     }
 
-    
+    /** update self.vehicle_dic, where vehicle_dic[vehicleID] returns the information associated with this vehicleID.
+        Call setupTimeStrings to display info on time.
+     **/
     func fetchVehicles(){
         var api = FetchVehiclesAPI()
         api.fetchVehicles(){
