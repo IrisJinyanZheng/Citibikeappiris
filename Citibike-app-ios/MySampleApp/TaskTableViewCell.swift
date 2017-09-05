@@ -10,9 +10,9 @@ import UIKit
 
 class TaskTableViewCell: UITableViewCell {
     
-    //MARK: Properties
+    /** task description **/
     @IBOutlet weak var TaskDesTextView: UITextView!
-
+    /** taskID **/
     @IBOutlet weak var TaskIDLabel: UILabel!
     
     override func awakeFromNib() {

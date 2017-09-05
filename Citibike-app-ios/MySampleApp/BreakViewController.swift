@@ -11,8 +11,9 @@ import UIKit
 //var endTime = NSDate()
 
 class BreakViewController: UIViewController {
-
+    /** Pressed if the driver wants to take a lunch break **/
     @IBOutlet weak var lunchBreakButton: UIButton!
+    /** Pressed if the driver wants to take a 15 min short break**/
     @IBOutlet weak var shortBreakButton: UIButton!
     
     @IBOutlet weak var successLabel: UILabel!

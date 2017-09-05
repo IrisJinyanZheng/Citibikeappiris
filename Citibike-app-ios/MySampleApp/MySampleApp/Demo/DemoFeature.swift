@@ -12,7 +12,7 @@
 //
 
 import Foundation
-
+/** This class is used to instantiate different storyboards **/
 class DemoFeature: NSObject {
     
     var displayName: String

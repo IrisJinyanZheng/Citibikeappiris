@@ -207,7 +207,7 @@ class VehicleViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
         view.addSubview(resultLabel)
         
     }
-    
+    //** clear the content in updateHistoryTextView **//
     func clearTextFieldButtonPressed(){
         updateHistoryTextView.text = ""
         eventDescriptions = [String]()
@@ -242,14 +242,14 @@ class VehicleViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
     }
     
     
-    
+    //** when driver press the location button, pop up a new viewcontroller **//
     func locationButtonPressed(){
         let locationViewController = LocationViewController()
         
         navigationController?.pushViewController(locationViewController, animated: true)
     }
     
-    
+    //** when driver press the send address button, update the database**//
     func sendAddressButtonWasPressed(){
         /// Unwrap the text values from our textfields
         if let number = bikeNumTextField.text, let brokennumber = brokenbikeNumTextField.text, let vehicleID = vehicleIdTextField.text, let driverID1 = driver1TextField.text, let driverID2 = driver2TextField.text{
@@ -319,7 +319,7 @@ class VehicleViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
     }
     
 
-        
+    /** set up the model for vehiclePickerview and vehicle_dic. vehicle_dic [vehicleID] contains all info associated with this particular vehicleID **/
     func fetchVehicles(){
         var api = FetchVehiclesAPI()
         api.fetchVehicles(){
@@ -345,15 +345,17 @@ class VehicleViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
             
         }
     }
-    
+    /**  UIPickerView datasource method: number of components is 1 **/
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
+    /**  UIPickerView datasource method: number of rows in component is the number of vehiclePickerData **/
+
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return vehiclePickerData.count
     }
-    
+    /**  UIPickerView datasource method: populate each row in pickerView **/
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         let tempvID: Int = vehiclePickerData[row]
         let v = vehicle_dic[tempvID]
@@ -400,7 +402,7 @@ class VehicleViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
     }
     
 
-    
+    /** If the user is about to edit the textfield, show the vehiclePicker and disables editing **/
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         vehiclePicker.isHidden = false
         return false

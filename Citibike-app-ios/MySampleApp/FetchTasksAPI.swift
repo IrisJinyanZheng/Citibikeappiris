@@ -14,13 +14,15 @@ import AWSMobileHubHelper
 let link_base = "http://ec2-54-196-202-203.compute-1.amazonaws.com"
 
 class FetchTasksAPI{
-    
+    /** json of Tasks **/
     let link = "http://ec2-54-196-202-203.compute-1.amazonaws.com/getTasks.json"
+    /** json of TaskTypes **/
     let link2 = "http://ec2-54-196-202-203.compute-1.amazonaws.com/getTaskTypes.json"
+    /** json of stations **/
     let link3 = "http://ec2-54-196-202-203.compute-1.amazonaws.com/getStations.json"
     let link4 = link_base + "/reasonCode.json"
     
-    
+    /** This method is called in viewcontroller. It transforms the raw json data into a more efficient data structure. reasoncode_dic, passed as parameter of completion handler, is stored in the model of viewcontroller where reasoncode_dic[reasonID] returns all information associated with that particular reasonID **/
     func fetchReasonCode(completion:@escaping (Dictionary<Int, Dictionary<String, Any>>) -> ()){
         
         guard let url = URL(string: link4) else{return }
@@ -45,7 +47,7 @@ class FetchTasksAPI{
         task.resume()
         
     }
-    
+    /** create a datastructure reasoncode_dic where reasoncode_dic[reasonID] returns the all the information associated with this reasonID **/
     func getReasonCodeFromJSON(json: [Dictionary<String,Any>]) -> Dictionary<Int, Dictionary<String, Any>>{
         var reasoncode_dic = Dictionary<Int, Dictionary<String, Any>>()
         
@@ -61,7 +63,8 @@ class FetchTasksAPI{
         return reasoncode_dic
     }
     
-
+    /** transform the raw json data into an array of Tasks used to populate tableview.
+     All the Tasks in the array have username specificed in parameter **/
     func fetchTasks(username: String, completion:@escaping ([Task]) -> ()){
         
         guard let url = URL(string: link) else {return}
@@ -85,7 +88,7 @@ class FetchTasksAPI{
         task.resume()
     }
     
-    
+    /** This method is called in viewcontroller. It transforms the raw json data into a more efficient datastructure task_dic. task_dic[taskID] stores all information related to the particular taskID **/
     func fetchTaskTypes(completion:@escaping (Dictionary<Int, Dictionary<String,Any>>) -> ()){
         
         guard let url = URL(string: link2) else{return }
@@ -110,7 +113,8 @@ class FetchTasksAPI{
         task.resume()
    
     }
-    
+    /** This method is called in viewcontroller. It transforms the raw json data into a more efficient datastructure station_dic. station_dic[stationID] stores all information related to the particular stationID **/
+
     func fetchStations(completion:@escaping (Dictionary<Int, Dictionary<String, Any>>) -> ()){
         
         guard let url = URL(string: link3) else{return }
@@ -135,7 +139,7 @@ class FetchTasksAPI{
         task.resume()
         
     }
-    
+    /** Helper method used in fetchReasonCode and fetchStations. transform the raw data into type of Dictionary<String,Any> to be more easily parsed **/
     func getListFromData(data: Data) -> [Dictionary<String,Any>]? {
         
         if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) {
@@ -148,7 +152,7 @@ class FetchTasksAPI{
         return nil
     }
     
-    
+    /** Parse the raw data into a dictionary of type Dictionary<String,Dictionary<String,Any>>**/
     func getDictionaryFromData(data: Data) -> Dictionary<String, Dictionary<String, Any>>? {
         
         if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) {
@@ -159,7 +163,8 @@ class FetchTasksAPI{
     
         return nil
     }
-    
+    /** the first parameter is the json data processed by method getListFromData.
+        It returns a more efficient datastructure station_dic where station_dic[stationID] stores all information related to that particular station_ID**/
     func getStationsFromJSON(json: [Dictionary<String,Any>]) -> Dictionary<Int, Dictionary<String, Any>>{
         var station_dic = Dictionary<Int, Dictionary<String, Any>>()
         
@@ -181,7 +186,8 @@ class FetchTasksAPI{
     }
     
     
-    
+    /** the first parameter is the json data processed by method getListFromData.
+     It returns a more efficient datastructure task_dic where task_dic[tType] stores all information related to that particular tType **/
     func getTaskTypesFromJSON(json: [Dictionary<String,Any>]) -> Dictionary<Int, Dictionary<String,Any>>{
         var task_dic = Dictionary<Int, Dictionary<String,Any>>()
         
@@ -200,7 +206,7 @@ class FetchTasksAPI{
         return task_dic
     }
     
-    
+    /** parse the json dictionary into Task objects which can be used to populate tableview cells **/
     func getTasksFromJSON(json: Dictionary<String, Dictionary<String, Any>>, username:String) -> [Task]{
         
         var tasks = [Task]()

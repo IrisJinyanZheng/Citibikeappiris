@@ -13,7 +13,7 @@ import ObjectMapper
 import AlamofireObjectMapper
 import AWSMobileHubHelper
 
-
+/** Task is the model used to fill in the tableview cells **/
 class Task{
     var tID: Int
     //var publishTime: Date
@@ -73,19 +73,22 @@ class TaskListTableViewController: UITableViewController {
     var userName: String!
     var userID: String!
     var tasks = [Task]()
+    /** task_dic[taskID] returns all info associated withthat particular taskID **/
     var task_dic = Dictionary<Int,Dictionary<String,Any>>()
+    /** **/
     var station_dic = Dictionary<Int,Dictionary<String,Any>>()
     var reasoncode_dic = Dictionary<Int,Dictionary<String,Any>>()
     
     var successText = "You are on break! You can finish the break by updating task, click on the break task, and click 'Complete'"
     
-    
+    /** pressed to update station info **/
     @IBOutlet weak var updateStationButton: UIButton!
+    /** pressed to update task info **/
     @IBOutlet weak var updateTaskButton: UIButton!
     
     
     @IBOutlet weak var updateView: UIView!
-    
+
     @IBOutlet weak var lunchBreakButton: UIButton!
     @IBOutlet weak var shortBreakButton: UIButton!
 
@@ -149,7 +152,7 @@ class TaskListTableViewController: UITableViewController {
             self.fetchTasks()
         }
     }
-    
+    /** **/
     func fetchTasks(){
 
         var api = FetchTasksAPI()
@@ -207,7 +210,7 @@ class TaskListTableViewController: UITableViewController {
 
     }
     
-    
+    /**If the driver is allowed to take a lunch break, show success **/
     func lunchBreakButtonPressed(){
         
         var contents = ""
