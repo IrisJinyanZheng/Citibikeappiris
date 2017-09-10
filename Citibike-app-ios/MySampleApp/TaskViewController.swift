@@ -39,8 +39,11 @@ class TaskViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     var userName: String!
     var userID: String!
     var task: Task!
+    /** A convenient data structure to store data parsed from raw json. task_dic[taskID] returns all information associated with this particular taskID, in the form of Dic<String,Any> **/
     var task_dic: Dictionary<Int, Dictionary<String,Any>>!
+    /** A convenient data structure to store data parsed from raw json. station_dic[stationID] returns all information associated with this particular stationID, in the form of Dic<String,Any> **/
     var station_dic: Dictionary<Int,Dictionary<String,Any>>!
+    /** A convenient data structure to store data parsed from raw json. reasoncode_dic[reasonID] returns all information associated with this particular reasonID, in the form of Dic<String,Any> **/
     var reasoncode_dic: Dictionary<Int,Dictionary<String,Any>>!
     
 
@@ -56,7 +59,7 @@ class TaskViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         // Do any additional setup after loading the view.
     }
     
-    
+    /**set up the UI programatically. Notice that 1.we only enable the completeButton if the button has not been pressed before 2.We can't do any operation if the task is waiting for approval or rejection **/
     func setupView(){
         
         let labelLeftEdgeInset: CGFloat = 20
@@ -215,7 +218,7 @@ class TaskViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     }
     
     
-    
+    /** When driver accepts task, we generate a specific URL using this driver's taskID, vehicleID etc. Then we fetch task information from remote database using that URL. Update the UI that displays information on this particular task **/
     func acceptButtonPressed(){
         
         var nxlongi = 0.0
@@ -251,7 +254,7 @@ class TaskViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         }
     }
     
-    
+    /** When driver presses the arrival button, we generate a specific URL using this driver's taskID, vehicleID rejectReason(if he has)etc. Then we fetch task information from remote database using that URL. Update the UI that displays information on this particular task. At last, we pop the taskviewcontroller off the stack **/
     
     func arrivalButtonPressed(){
         

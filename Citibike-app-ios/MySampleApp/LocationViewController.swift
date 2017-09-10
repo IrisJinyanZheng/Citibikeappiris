@@ -20,7 +20,7 @@ class LocationViewController: UIViewController, CLLocationManagerDelegate {
     var altitude: UILabel!
     var verticalAccuracy: UILabel!
     var distance: UILabel!
-    
+    /** A instance of locationManager is used to retrive the most recent location and heading data**/
     var locationManager: CLLocationManager = CLLocationManager()
     var startLocation: CLLocation!
     
@@ -39,7 +39,7 @@ class LocationViewController: UIViewController, CLLocationManagerDelegate {
         
         // Do any additional setup after loading the view.
     }
-    
+    /** set up UIView that displays latitude, longitude and horizontalAccuracy **/
     func setupView(){
         let labelLeftEdgeInset: CGFloat = 20
         let textFieldTopInset: CGFloat = 30
@@ -61,11 +61,11 @@ class LocationViewController: UIViewController, CLLocationManagerDelegate {
         
         
     }
-    
+    /** reset the startLocation to nil **/
     func resetDistance(_ sender: AnyObject) {
         startLocation = nil
     }
-    
+    /** using the CLLocationManager to get the nearest bike storage location,and displays its information (latitude, longitude etc) in UI **/
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation])
     {
@@ -95,7 +95,7 @@ class LocationViewController: UIViewController, CLLocationManagerDelegate {
         
         //       distance.text = String(format: "%.2f", distanceBetween)
     }
-    
+    /** provided method for locationManager. Unimplemented**/
     func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error) {
         

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+/** history **/
 class Event {
     
     var bikeNum: String
@@ -373,7 +373,7 @@ class VehicleViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
         return "\(tempvID) \(vehicleName), Capacity \(capacity) "
 
     }
-    
+    /** after selecting, disappear**/
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
         let tempvID: Int = vehiclePickerData[row]
